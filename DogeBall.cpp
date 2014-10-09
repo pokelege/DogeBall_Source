@@ -21,6 +21,8 @@
 #include <Core\WindowInfo.h>
 #include <Input\TwoDPlaneInput.h>
 #include <Input\Auto\TwoDZoomCamera.h>
+#include <Input\KeyInput.h>
+#include "DebugMemory.h"
 void DogeBall::initializeGL()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
@@ -46,7 +48,7 @@ void DogeBall::initializeGL()
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
 	player->translate = glm::vec3( -10 , 0 , 0 );
 	player->addComponent( renderable );
-	TwoDPlaneInput* planeInput = new TwoDPlaneInput;
+	planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 10;
 	player->addComponent( planeInput );
 
@@ -60,7 +62,7 @@ void DogeBall::initializeGL()
 	renderable2->alphaBlendingEnabled = false;
 	renderable2->culling = CT_NONE;
 	player2->addComponent( renderable2 );
-	TwoDPlaneInput* planeInput2 = new TwoDPlaneInput;
+	planeInput2 = new TwoDPlaneInput;
 	planeInput2->up = VK_UP;
 	planeInput2->down = VK_DOWN;
 	planeInput2->left = VK_LEFT;
@@ -76,16 +78,16 @@ void DogeBall::initializeGL()
 	camera->nearestObject = 0.01f;
 	view->addComponent( camera );
 	view->translate = glm::vec3( 0 , 0 , 50 );
-	TwoDZoomCamera* zoomer = new TwoDZoomCamera;
+	zoomer = new TwoDZoomCamera;
 	zoomer->initialize( 2 );
 	zoomer->addGameObjectToTrack( player );
 	zoomer->addGameObjectToTrack( player2 );
 	zoomer->maxDistance = 100;
 	zoomer->minDistance = 5;
-	zoomer->zoomScale = 1.5f;
+	zoomer->zoomScale = 2;
 	view->addComponent( zoomer );
 
-	QTimer* timer = new QTimer();
+	timer = new QTimer();
 	connect( timer , SIGNAL( timeout() ) , this , SLOT( update() ) );
 	timer->start( 0 );
 }
@@ -103,4 +105,14 @@ void DogeBall::update()
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	repaint();
+}
+
+DogeBall::~DogeBall()
+{
+	CommonGraphicsCommands::destroyGlobalGraphics();
+	GameObjectManager::globalGameObjectManager.destroy();
+	delete zoomer;
+	delete timer;
+	delete planeInput2;
+	delete planeInput;
 }
