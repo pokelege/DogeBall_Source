@@ -34,7 +34,7 @@ void DogeBall::initializeGL()
 	geometry->addShaderStreamedParameter( 3 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
-	renderable->initialize( 0 , 1 );
+	renderable->initialize( 5 , 1 );
 	renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
 	renderable->geometryInfo = geometry;
 	renderable->shaderInfo = shader;
@@ -43,14 +43,29 @@ void DogeBall::initializeGL()
 	GameObjectManager::globalGameObjectManager.initialize( 5 );
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
-	player->translate = glm::vec3( 0 , 0 , 0 );
+	player->translate = glm::vec3( -10 , 0 , 0 );
 	player->addComponent( renderable );
 	TwoDPlaneInput* planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 10;
 	player->addComponent( planeInput );
 
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
-	
+	player2->translate = glm::vec3( 10 , 0 , 0 );
+	Renderable* renderable2 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+	renderable2->initialize( 5 , 1 );
+	renderable2->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable2->geometryInfo = geometry;
+	renderable2->shaderInfo = shader;
+	renderable2->alphaBlendingEnabled = false;
+	renderable2->culling = CT_NONE;
+	player2->addComponent( renderable2 );
+	TwoDPlaneInput* planeInput2 = new TwoDPlaneInput;
+	planeInput2->up = VK_UP;
+	planeInput2->down = VK_DOWN;
+	planeInput2->left = VK_LEFT;
+	planeInput2->right = VK_RIGHT;
+	planeInput2->moveSensitivity = 10;
+	player2->addComponent( planeInput2 );
 
 	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
 	camera = GraphicsCameraManager::globalCameraManager.addCamera();
