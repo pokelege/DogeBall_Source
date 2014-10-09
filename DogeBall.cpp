@@ -20,6 +20,7 @@
 #include <Graphics\VertexInfo.h>
 #include <Core\WindowInfo.h>
 #include <Input\TwoDPlaneInput.h>
+#include <Input\Auto\TwoDZoomCamera.h>
 void DogeBall::initializeGL()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
@@ -75,6 +76,14 @@ void DogeBall::initializeGL()
 	camera->nearestObject = 0.01f;
 	view->addComponent( camera );
 	view->translate = glm::vec3( 0 , 0 , 50 );
+	TwoDZoomCamera* zoomer = new TwoDZoomCamera;
+	zoomer->initialize( 2 );
+	zoomer->addGameObjectToTrack( player );
+	zoomer->addGameObjectToTrack( player2 );
+	zoomer->maxDistance = 100;
+	zoomer->minDistance = 5;
+	zoomer->zoomScale = 1.5f;
+	view->addComponent( zoomer );
 
 	QTimer* timer = new QTimer();
 	connect( timer , SIGNAL( timeout() ) , this , SLOT( update() ) );
