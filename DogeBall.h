@@ -14,6 +14,7 @@ class DogeBall : public QGLWidget
 	TwoDZoomCamera* zoomer;
 	QTimer* timer;
 	TwoDPlaneInput* planeInput, *planeInput2;
+	int theTex;
 protected:
 	
 	void initializeGL();

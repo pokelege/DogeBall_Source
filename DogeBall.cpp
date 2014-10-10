@@ -22,6 +22,7 @@
 #include <Input\TwoDPlaneInput.h>
 #include <Input\Auto\TwoDZoomCamera.h>
 #include <Input\KeyInput.h>
+#include <Graphics\GraphicsTextureManager.h>
 #include "DebugMemory.h"
 void DogeBall::initializeGL()
 {
@@ -34,7 +35,10 @@ void DogeBall::initializeGL()
 	
 	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/player.pmd" , GraphicsBufferManager::globalBufferManager );
 	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
-	geometry->addShaderStreamedParameter( 3 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+
+	TextureInfo* player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1.png" );
+	TextureInfo* player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2.png" );
 
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable->initialize( 5 , 1 );
@@ -43,6 +47,7 @@ void DogeBall::initializeGL()
 	renderable->shaderInfo = shader;
 	renderable->alphaBlendingEnabled = false;
 	renderable->culling = CT_NONE;
+	renderable->addTexture( player1Texture );
 	GameObjectManager::globalGameObjectManager.initialize( 5 );
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
@@ -61,6 +66,7 @@ void DogeBall::initializeGL()
 	renderable2->shaderInfo = shader;
 	renderable2->alphaBlendingEnabled = false;
 	renderable2->culling = CT_NONE;
+	renderable2->addTexture( player2Texture );
 	player2->addComponent( renderable2 );
 	planeInput2 = new TwoDPlaneInput;
 	planeInput2->up = VK_UP;
@@ -86,7 +92,8 @@ void DogeBall::initializeGL()
 	zoomer->minDistance = 5;
 	zoomer->zoomScale = 2;
 	view->addComponent( zoomer );
-
+	theTex = 0;
+	//GraphicsSharedUniformManager::globalSharedUniformManager.setSharedUniform( "colorTexture" , PT_INT , &theTex );
 	timer = new QTimer();
 	connect( timer , SIGNAL( timeout() ) , this , SLOT( update() ) );
 	timer->start( 0 );
