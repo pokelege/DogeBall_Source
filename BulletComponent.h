@@ -1,6 +1,7 @@
 #pragma once
 #include <Core\Component.h>
 #include <glm.hpp>
+#include "DebugMemory.h"
 class BulletComponent : public Component
 {
 	GameObject* parent;
