@@ -38,8 +38,14 @@ void DogeBall::initializeGL()
 	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+
 	TextureInfo* player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1.png" );
 	TextureInfo* player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2.png" );
+
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Level.png" );
 
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable->initialize( 5 , 1 );
@@ -80,6 +86,19 @@ void DogeBall::initializeGL()
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
+	
+	level = GameObjectManager::globalGameObjectManager.addGameObject();
+	level->scale = glm::vec3( 100 , 100 , 100);
+	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+	renderable3->initialize( 5 , 1 );
+	renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable3->geometryInfo = levelGeo;
+	renderable3->shaderInfo = shader;
+	renderable3->alphaBlendingEnabled = false;
+	renderable3->culling = CT_NONE;
+	renderable3->addTexture( levelTexture );
+	renderable3->setRenderableUniform( "tint" , PT_VEC4 , reinterpret_cast< const void* >( &defaultColor ) );
+	level->addComponent( renderable3 );
 
 	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
 	camera = GraphicsCameraManager::globalCameraManager.addCamera();
@@ -93,8 +112,8 @@ void DogeBall::initializeGL()
 	zoomer->initialize( 2 );
 	zoomer->addGameObjectToTrack( player );
 	zoomer->addGameObjectToTrack( player2 );
-	zoomer->maxDistance = 100;
-	zoomer->minDistance = 5;
+	zoomer->maxDistance = 50;
+	zoomer->minDistance = 2;
 	zoomer->zoomScale = 2;
 	view->addComponent( zoomer );
 	theTex = 0;
@@ -102,6 +121,7 @@ void DogeBall::initializeGL()
 	timer = new QTimer();
 	connect( timer , SIGNAL( timeout() ) , this , SLOT( update() ) );
 	timer->start( 0 );
+	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );
 }
 void DogeBall::paintGL()
 {
