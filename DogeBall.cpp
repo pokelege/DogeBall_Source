@@ -24,6 +24,7 @@
 #include <Input\KeyInput.h>
 #include <Graphics\GraphicsTextureManager.h>
 #include "DebugMemory.h"
+#include "Life.h"
 void DogeBall::initializeGL()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
@@ -56,6 +57,8 @@ void DogeBall::initializeGL()
 	planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 10;
 	player->addComponent( planeInput );
+	life1 = new Life;
+	player->addComponent( life1 );
 
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
 	player2->translate = glm::vec3( 10 , 0 , 0 );
@@ -75,6 +78,8 @@ void DogeBall::initializeGL()
 	planeInput2->right = VK_RIGHT;
 	planeInput2->moveSensitivity = 10;
 	player2->addComponent( planeInput2 );
+	life2 = new Life;
+	player2->addComponent( life2 );
 
 	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
 	camera = GraphicsCameraManager::globalCameraManager.addCamera();
@@ -111,7 +116,9 @@ void DogeBall::update()
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
+	GameObjectManager::globalGameObjectManager.earlyDrawParents();
 	repaint();
+	GameObjectManager::globalGameObjectManager.lateDrawParents();
 }
 
 DogeBall::~DogeBall()
@@ -122,4 +129,6 @@ DogeBall::~DogeBall()
 	delete timer;
 	delete planeInput2;
 	delete planeInput;
+	delete life1;
+	delete life2;
 }
