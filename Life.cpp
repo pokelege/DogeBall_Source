@@ -25,4 +25,5 @@ void Life::earlyDraw()
 	if ( !renderable ) return;
 	color = glm::mix( lowLifeColor , glm::vec4( 1 , 1 , 1 , 1 ) , currentLife / fullLife );
 	renderable->setRenderableUniform( "tint" , PT_VEC4 , reinterpret_cast< const void* >( &color ) );
+	if ( currentLife <= 0 ) parent->active = false;
 }

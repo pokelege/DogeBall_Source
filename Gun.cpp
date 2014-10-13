@@ -38,8 +38,8 @@ Gun::Gun( GameObject* target )
 	bullet->addComponent( bulletComponent = new BulletComponent() );
 	bulletComponent->damage = 1;
 	bulletComponent->lifeTime = 0.5;
-	bulletComponent->range = 1.5;
-	bulletComponent->speed = 1;
+	bulletComponent->range = 1;
+	bulletComponent->speed = 0.75;
 	bulletComponent->target = target;
 	bullet->scale *= bulletComponent->range;
 	bullet->addComponent( renderable );
