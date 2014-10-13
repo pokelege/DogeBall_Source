@@ -25,6 +25,8 @@
 #include <Graphics\GraphicsTextureManager.h>
 #include "DebugMemory.h"
 #include "Life.h"
+#include "Gun.h"
+#include "GlobalItems.h"
 void DogeBall::initializeGL()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
@@ -55,7 +57,7 @@ void DogeBall::initializeGL()
 	renderable->alphaBlendingEnabled = false;
 	renderable->culling = CT_NONE;
 	renderable->addTexture( player1Texture );
-	GameObjectManager::globalGameObjectManager.initialize( 5 );
+	GameObjectManager::globalGameObjectManager.initialize( 10 );
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
 	player->translate = glm::vec3( -10 , 0 , 0 );
@@ -86,7 +88,12 @@ void DogeBall::initializeGL()
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
-	
+	player2->addComponent( gun2 = new Gun(player) );
+	gun2->key = VK_RSHIFT;
+
+	player->addComponent( gun1 = new Gun(player2) );
+	gun1->key = VK_SPACE;
+
 	level = GameObjectManager::globalGameObjectManager.addGameObject();
 	level->scale = glm::vec3( 100 , 100 , 100);
 	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
@@ -122,6 +129,7 @@ void DogeBall::initializeGL()
 	connect( timer , SIGNAL( timeout() ) , this , SLOT( update() ) );
 	timer->start( 0 );
 	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );
+	GlobalItems::global.playMusic();
 }
 void DogeBall::paintGL()
 {
@@ -151,4 +159,6 @@ DogeBall::~DogeBall()
 	delete planeInput;
 	delete life1;
 	delete life2;
+	delete gun1;
+	delete gun2;
 }

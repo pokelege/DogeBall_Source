@@ -2,6 +2,7 @@
 #include <Misc\Clock.h>
 #include <Core\GameObject.h>
 #include "Life.h"
+#include "GlobalItems.h"
 void BulletComponent::attatch( GameObject* parent )
 {
 	this->parent = parent;
@@ -26,11 +27,13 @@ void BulletComponent::lateUpdate()
 	float distance = glm::length( parent->translate - target->translate );
 	if ( distance <= range )
 	{
-		Life* life = parent->getComponent<Life>();
+		Life* life = target->getComponent<Life>();
 		if ( life )
 		{
 			life->changeLife( -damage );
 		}
+		currentLifeTime = 0;
+		GlobalItems::global.playHit();
 	}
 }
 void BulletComponent::earlyDraw() {}
@@ -42,4 +45,5 @@ void BulletComponent::fire( glm::vec3& position , glm::vec3& direction )
 	parent->translate = position;
 	this->direction = direction;
 	parent->active = true;
+	currentLifeTime = lifeTime;
 }

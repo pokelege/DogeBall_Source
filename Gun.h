@@ -9,6 +9,7 @@ class Gun :public Component
 public:
 	BulletComponent* bulletComponent;
 	unsigned int key;
-	Gun();
+	Gun(GameObject* target);
+	~Gun();
 	void earlyUpdate();
 };

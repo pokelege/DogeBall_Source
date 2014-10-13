@@ -7,12 +7,14 @@ class TwoDZoomCamera;
 class TwoDPlaneInput;
 class QTimer;
 class Life;
+class Gun;
 class DogeBall : public QGLWidget
 {
 	Q_OBJECT;
 
 	GameObject* player, *player2, *level;
 	Life* life1 , *life2;
+	Gun* gun1 , *gun2;
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
 	QTimer* timer;

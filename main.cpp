@@ -10,6 +10,6 @@ int main( int argc , char** argv )
 #endif
 	QApplication app( argc , argv );
 	DogeBall game;
-	game.showFullScreen();
+	game.showMaximized();
 	return app.exec();
 }

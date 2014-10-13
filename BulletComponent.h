@@ -4,7 +4,6 @@
 #include "DebugMemory.h"
 class BulletComponent : public Component
 {
-	GameObject* parent;
 	glm::vec3 direction;
 	float currentLifeTime;
 protected:
@@ -12,6 +11,7 @@ protected:
 	virtual void attatch( GameObject* parent );
 	virtual void detatch();
 public:
+	GameObject* parent;
 	GameObject* target;
 	float lifeTime;
 	float speed;
