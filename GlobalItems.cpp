@@ -163,6 +163,14 @@ void GlobalItems::updateLevel()
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
+	if ( !player->getComponent<Life>()->changeLife( 0 ) )
+	{
+		changeState( GameStates::Start );
+	}
+	else if ( !player2->getComponent<Life>()->changeLife( 0 ) )
+	{
+		changeState( GameStates::Start );
+	}
 }
 void GlobalItems::drawLevel()
 {
