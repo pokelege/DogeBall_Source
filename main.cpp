@@ -1,3 +1,4 @@
+#include <Core\CommonWarningDisables.h>
 #include <Qt\qapplication.h>
 #include "DogeBall.h"
 #include <Graphics\CommonGraphicsCommands.h>

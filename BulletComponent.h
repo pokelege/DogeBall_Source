@@ -1,4 +1,5 @@
 #pragma once
+#include <Core\CommonWarningDisables.h>
 #include <Core\Component.h>
 #include <glm.hpp>
 #include "DebugMemory.h"
