@@ -34,6 +34,16 @@ struct GlobalItems
 	void updateStart();
 	void destroyStart();
 
+	void initPlayer1Win();
+	void drawPlayer1Win();
+	void updatePlayer1Win();
+	void destroyPlayer1Win();
+
+	void initPlayer2Win();
+	void drawPlayer2Win();
+	void updatePlayer2Win();
+	void destroyPlayer2Win();
+
 	void playHit();
 	void playMusic();
 	void initAudio();

@@ -165,11 +165,11 @@ void GlobalItems::updateLevel()
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
 	if ( !player->getComponent<Life>()->changeLife( 0 ) )
 	{
-		changeState( GameStates::Start );
+		changeState( GameStates::Player2 );
 	}
 	else if ( !player2->getComponent<Life>()->changeLife( 0 ) )
 	{
-		changeState( GameStates::Start );
+		changeState( GameStates::Player1 );
 	}
 }
 void GlobalItems::drawLevel()
@@ -264,7 +264,144 @@ void GlobalItems::destroyStart()
 	gun2 = 0;
 	if ( zoomer ) delete zoomer;
 	zoomer = 0;
+}
 
+void GlobalItems::initPlayer1Win()
+{
+	CommonGraphicsCommands::initializeGlobalGraphics();
+	std::string errors;
+	std::string vert = FileReader( "Shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "Shaders/FlatFragment.glsl" );
+	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
+	std::cout << errors.c_str() << std::endl;
+
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1Win.png" );
+
+	GameObjectManager::globalGameObjectManager.initialize( 2 );
+
+	level = GameObjectManager::globalGameObjectManager.addGameObject();
+	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+	renderable3->initialize( 5 , 1 );
+	renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable3->geometryInfo = levelGeo;
+	renderable3->shaderInfo = shader;
+	renderable3->alphaBlendingEnabled = false;
+	renderable3->culling = CT_NONE;
+	renderable3->addTexture( levelTexture );
+	level->addComponent( renderable3 );
+	theTex = 0;
+
+	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
+	camera = GraphicsCameraManager::globalCameraManager.addCamera();
+	camera->initializeRenderManagers();
+	camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	camera->FOV = 60.0f;
+	camera->nearestObject = 0.01f;
+	view->addComponent( camera );
+}
+void GlobalItems::drawPlayer1Win()
+{
+	GraphicsCameraManager::globalCameraManager.drawAllCameras();
+	GameObjectManager::globalGameObjectManager.lateDrawParents();
+}
+void GlobalItems::updatePlayer1Win()
+{
+	Clock::update();
+	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
+	GameObjectManager::globalGameObjectManager.updateParents();
+	GameObjectManager::globalGameObjectManager.lateUpdateParents();
+	GameObjectManager::globalGameObjectManager.earlyDrawParents();
+	if ( KeyInput::isDown( VK_SPACE ) ) changeState( GameStates::Start );
+}
+void GlobalItems::destroyPlayer1Win()
+{
+	if ( planeInput2 ) delete planeInput2;
+	planeInput2 = 0;
+	if ( planeInput ) delete planeInput;
+	planeInput = 0;
+	if ( life1 ) delete life1;
+	life1 = 0;
+	if ( life2 ) delete life2;
+	life2 = 0;
+	if ( gun1 ) delete gun1;
+	gun1 = 0;
+	if ( gun2 ) delete gun2;
+	gun2 = 0;
+	if ( zoomer ) delete zoomer;
+	zoomer = 0;
+}
+
+void GlobalItems::initPlayer2Win()
+{
+	CommonGraphicsCommands::initializeGlobalGraphics();
+	std::string errors;
+	std::string vert = FileReader( "Shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "Shaders/FlatFragment.glsl" );
+	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
+	std::cout << errors.c_str() << std::endl;
+
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2Win.png" );
+
+	GameObjectManager::globalGameObjectManager.initialize( 2 );
+
+	level = GameObjectManager::globalGameObjectManager.addGameObject();
+	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+	renderable3->initialize( 5 , 1 );
+	renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable3->geometryInfo = levelGeo;
+	renderable3->shaderInfo = shader;
+	renderable3->alphaBlendingEnabled = false;
+	renderable3->culling = CT_NONE;
+	renderable3->addTexture( levelTexture );
+	level->addComponent( renderable3 );
+	theTex = 0;
+
+	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
+	camera = GraphicsCameraManager::globalCameraManager.addCamera();
+	camera->initializeRenderManagers();
+	camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	camera->FOV = 60.0f;
+	camera->nearestObject = 0.01f;
+	view->addComponent( camera );
+}
+void GlobalItems::drawPlayer2Win()
+{
+	GraphicsCameraManager::globalCameraManager.drawAllCameras();
+	GameObjectManager::globalGameObjectManager.lateDrawParents();
+}
+void GlobalItems::updatePlayer2Win()
+{
+	Clock::update();
+	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
+	GameObjectManager::globalGameObjectManager.updateParents();
+	GameObjectManager::globalGameObjectManager.lateUpdateParents();
+	GameObjectManager::globalGameObjectManager.earlyDrawParents();
+	if ( KeyInput::isDown( VK_SPACE ) ) changeState( GameStates::Start );
+}
+void GlobalItems::destroyPlayer2Win()
+{
+	if ( planeInput2 ) delete planeInput2;
+	planeInput2 = 0;
+	if ( planeInput ) delete planeInput;
+	planeInput = 0;
+	if ( life1 ) delete life1;
+	life1 = 0;
+	if ( life2 ) delete life2;
+	life2 = 0;
+	if ( gun1 ) delete gun1;
+	gun1 = 0;
+	if ( gun2 ) delete gun2;
+	gun2 = 0;
+	if ( zoomer ) delete zoomer;
+	zoomer = 0;
 }
 
 void GlobalItems::changeState( GameStates state )
@@ -280,8 +417,10 @@ void GlobalItems::changeState( GameStates state )
 			initLevel();
 			break;
 		case Player1:
+			initPlayer1Win();
 			break;
 		case Player2:
+			initPlayer2Win();
 			break;
 		default:
 			break;
@@ -300,8 +439,10 @@ void GlobalItems::update()
 			updateLevel();
 			break;
 		case Player1:
+			updatePlayer1Win();
 			break;
 		case Player2:
+			updatePlayer2Win();
 			break;
 		default:
 			break;
@@ -318,8 +459,10 @@ void GlobalItems::draw()
 			drawLevel();
 			break;
 		case Player1:
+			drawPlayer1Win();
 			break;
 		case Player2:
+			drawPlayer2Win();
 			break;
 		default:
 			break;
@@ -336,6 +479,8 @@ void GlobalItems::destroyAll()
 	destroyAudio();
 	destroyLevel();
 	destroyStart();
+	destroyPlayer1Win();
+	destroyPlayer2Win();
 	CommonGraphicsCommands::destroyGlobalGraphics();
 	GameObjectManager::globalGameObjectManager.destroy();
 }
