@@ -1,4 +1,4 @@
-#include "Life.h"
+#include <Life.h>
 #include <Graphics\RenderableInfo.h>
 #include <Core\GameObject.h>
 

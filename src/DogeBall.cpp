@@ -1,8 +1,8 @@
-#include "DogeBall.h"
+#include <DogeBall.h>
 #include <Qt\qtimer.h>
 #include <Core\WindowInfo.h>
-#include "DebugMemory.h"
-#include "GlobalItems.h"
+#include <DebugMemory.h>
+#include <GlobalItems.h>
 void DogeBall::initializeGL()
 {
 	GlobalItems::global.changeState(GameStates::Start);

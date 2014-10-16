@@ -1,7 +1,7 @@
-#include "GlobalItems.h"
+#include <GlobalItems.h>
 #include <Graphics\GraphicsTextureManager.h>
-#include "Life.h"
-#include "Gun.h"
+#include <Life.h>
+#include <Gun.h>
 #include <Input\TwoDPlaneInput.h>
 #include <Input\Auto\TwoDZoomCamera.h>
 #include <Input\KeyInput.h>

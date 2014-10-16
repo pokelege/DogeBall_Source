@@ -1,8 +1,8 @@
 #include <Core\CommonWarningDisables.h>
 #include <Qt\qapplication.h>
-#include "DogeBall.h"
+#include <DogeBall.h>
 #include <Graphics\CommonGraphicsCommands.h>
-#include "DebugMemory.h"
+#include <DebugMemory.h>
 int main( int argc , char** argv )
 {
 #ifdef _DEBUG

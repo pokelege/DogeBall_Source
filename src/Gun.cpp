@@ -1,6 +1,6 @@
 #include <Core\CommonWarningDisables.h>
 #include "Gun.h"
-#include "BulletComponent.h"
+#include <BulletComponent.h>
 #include <Core\GameObjectManger.h>
 #include <Core\GameObject.h>
 #include <Input\KeyInput.h>

@@ -1,8 +1,8 @@
-#include "BulletComponent.h"
+#include <BulletComponent.h>
 #include <Misc\Clock.h>
 #include <Core\GameObject.h>
-#include "Life.h"
-#include "GlobalItems.h"
+#include <Life.h>
+#include <GlobalItems.h>
 void BulletComponent::attatch( GameObject* parent )
 {
 	this->parent = parent;
