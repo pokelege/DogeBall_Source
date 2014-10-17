@@ -8,6 +8,7 @@ class Camera;
 class TwoDZoomCamera;
 class TwoDPlaneInput;
 class Gun;
+class Particle;
 enum GameStates { None, Start , Level , Player1 , Player2 };
 struct GlobalItems
 {
@@ -20,6 +21,7 @@ struct GlobalItems
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
 	TwoDPlaneInput* planeInput , *planeInput2;
+	Particle* player1Particle , *player2Particle;
 	GameStates state;
 	int theTex;
 	glm::vec4 defaultColor;

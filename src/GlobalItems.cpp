@@ -24,6 +24,8 @@
 #include <Misc\Clock.h>
 #include <iostream>
 #include <Graphics\RenderableInfo.h>
+#include <Physics\Particle.h>
+#include <Physics\ParticleWorld.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -92,10 +94,13 @@ void GlobalItems::initLevel()
 	player->translate = glm::vec3( -10 , 0 , 0 );
 	player->addComponent( renderable );
 	planeInput = new TwoDPlaneInput;
-	planeInput->moveSensitivity = 10;
+	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
 	life1 = new Life;
 	player->addComponent( life1 );
+
+	player1Particle = new Particle;
+	player->addComponent( player1Particle );
 
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
 	player2->translate = glm::vec3( 10 , 0 , 0 );
@@ -113,10 +118,14 @@ void GlobalItems::initLevel()
 	planeInput2->down = VK_DOWN;
 	planeInput2->left = VK_LEFT;
 	planeInput2->right = VK_RIGHT;
-	planeInput2->moveSensitivity = 10;
+	planeInput2->moveSensitivity = 1000;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
+	
+	player2Particle = new Particle;
+	player2->addComponent( player2Particle );
+	
 	player2->addComponent( gun2 = new Gun( player ) );
 	gun2->key = VK_RSHIFT;
 
@@ -154,6 +163,10 @@ void GlobalItems::initLevel()
 	view->addComponent( zoomer );
 	theTex = 0;
 	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );
+
+	ParticleWorld::global.addParticleToManage( player1Particle );
+	ParticleWorld::global.addParticleToManage( player2Particle );
+
 	playMusic();
 }
 void GlobalItems::updateLevel()
@@ -161,6 +174,7 @@ void GlobalItems::updateLevel()
 	Clock::update();
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
+	ParticleWorld::global.update();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
 	if ( !player->getComponent<Life>()->changeLife( 0 ) )
@@ -194,7 +208,12 @@ void GlobalItems::destroyLevel()
 	gun2 = 0;
 	if ( zoomer ) delete zoomer;
 	zoomer = 0;
-
+	ParticleWorld::global.removeParticleToManage( player1Particle );
+	ParticleWorld::global.removeParticleToManage( player2Particle );
+	if ( player1Particle ) delete player1Particle;
+	player1Particle = 0;
+	if ( player2Particle ) delete player2Particle;
+	player2Particle = 0;
 }
 
 void GlobalItems::initStart()
@@ -469,9 +488,9 @@ void GlobalItems::draw()
 	}
 }
 
-GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0) , state(GameStates::None)
+GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0) , state(GameStates::None)
 {
-	
+	ParticleWorld::global.initialize();
 }
 
 void GlobalItems::destroyAll()

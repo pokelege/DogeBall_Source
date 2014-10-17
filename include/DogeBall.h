@@ -4,14 +4,13 @@
 #include <glm.hpp>
 
 class QTimer;
-
+class Particle;
 class DogeBall : public QGLWidget
 {
 	Q_OBJECT;
 
 
 	QTimer* timer;
-
 protected:
 	
 	void initializeGL();
