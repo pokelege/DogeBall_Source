@@ -1,6 +1,6 @@
 #pragma once
 #include <Audio\AudioController.h>
-#include "DebugMemory.h"
+#include <DebugMemory.h>
 class GameObject;
 struct TextureInfo;
 class Life;

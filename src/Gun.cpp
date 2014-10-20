@@ -1,5 +1,5 @@
 #include <Core\CommonWarningDisables.h>
-#include "Gun.h"
+#include <Gun.h>
 #include <BulletComponent.h>
 #include <Core\GameObjectManger.h>
 #include <Core\GameObject.h>

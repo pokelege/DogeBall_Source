@@ -2,7 +2,7 @@
 #include <Core\CommonWarningDisables.h>
 #include <Core\Component.h>
 #include <glm.hpp>
-#include "DebugMemory.h"
+#include <DebugMemory.h>
 class BulletComponent : public Component
 {
 	glm::vec3 direction;

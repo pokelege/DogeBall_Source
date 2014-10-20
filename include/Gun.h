@@ -1,6 +1,6 @@
 #pragma once
 #include <Core\Component.h>
-#include "DebugMemory.h"
+#include <DebugMemory.h>
 class BulletComponent;
 class Gun :public Component
 {
