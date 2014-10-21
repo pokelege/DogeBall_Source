@@ -1,6 +1,7 @@
 #pragma once
 #include <Audio\AudioController.h>
 #include <DebugMemory.h>
+#include <vector>
 class GameObject;
 struct TextureInfo;
 class Life;
@@ -9,23 +10,29 @@ class TwoDZoomCamera;
 class TwoDPlaneInput;
 class Gun;
 class Particle;
+struct ShaderInfo;
 enum GameStates { None, Start , Level , Player1 , Player2 };
 struct GlobalItems
 {
 	GameObject* player , *player2 , *level;
 	Life* life1 , *life2;
 	AudioController* audio;
+	ShaderInfo* shader;
 	TextureInfo* player1Texture;
 	TextureInfo* player2Texture;
+	TextureInfo* dogePatternTexture;
 	Gun* gun1 , *gun2;
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
 	TwoDPlaneInput* planeInput , *planeInput2;
 	Particle* player1Particle , *player2Particle;
+	std::vector<Particle*> walls;
 	GameStates state;
 	int theTex;
 	glm::vec4 defaultColor;
 	void initPlayerTextures();
+	void initWalls();
+	void destroyWalls();
 	void initLevel();
 	void drawLevel();
 	void updateLevel();

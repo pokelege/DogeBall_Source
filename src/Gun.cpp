@@ -16,6 +16,7 @@
 #include <Misc\FileReader.h>
 #include <Graphics\GraphicsShaderManager.h>
 #include <iostream>
+#include <GlobalItems.h>
 Gun::Gun( GameObject* target )
 {
 	std::string errors;
@@ -32,6 +33,7 @@ Gun::Gun( GameObject* target )
 	renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
 	renderable->geometryInfo = ballGeo;
 	renderable->shaderInfo = shader;
+	renderable->addTexture( GlobalItems::global.dogePatternTexture );
 	renderable->alphaBlendingEnabled = false;
 	renderable->culling = CT_NONE;
 

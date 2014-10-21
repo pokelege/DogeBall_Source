@@ -26,6 +26,8 @@
 #include <Graphics\RenderableInfo.h>
 #include <Physics\Particle.h>
 #include <Physics\ParticleWorld.h>
+#include <Misc\RandomItemsGenerator.h>
+#include <time.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -57,6 +59,7 @@ void GlobalItems::initPlayerTextures()
 {
 	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1.png" );
 	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2.png" );
+	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/DogePattern.png" );
 }
 
 void GlobalItems::initLevel()
@@ -65,7 +68,7 @@ void GlobalItems::initLevel()
 	std::string errors;
 	std::string vert = FileReader( "Shaders/DiffuseVertex.glsl" );
 	std::string frag = FileReader( "Shaders/DiffuseFragment.glsl" );
-	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
+	shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
 	GlobalItems::global.initPlayerTextures();
@@ -88,10 +91,10 @@ void GlobalItems::initLevel()
 	renderable->alphaBlendingEnabled = false;
 	renderable->culling = CT_NONE;
 	renderable->addTexture( GlobalItems::global.player1Texture );
-	GameObjectManager::globalGameObjectManager.initialize( 10 );
+	GameObjectManager::globalGameObjectManager.initialize( 50 );
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
-	player->translate = glm::vec3( -10 , 0 , 0 );
+	player->translate = glm::vec3( -50 , 0 , 0 );
 	player->addComponent( renderable );
 	planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 1000;
@@ -103,7 +106,7 @@ void GlobalItems::initLevel()
 	player->addComponent( player1Particle );
 
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
-	player2->translate = glm::vec3( 10 , 0 , 0 );
+	player2->translate = glm::vec3( 50 , 0 , 0 );
 	Renderable* renderable2 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable2->initialize( 5 , 1 );
 	renderable2->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
@@ -166,9 +169,59 @@ void GlobalItems::initLevel()
 
 	ParticleWorld::global.addParticleToManage( player1Particle );
 	ParticleWorld::global.addParticleToManage( player2Particle );
-
+	//ParticleWorld::global.addParticleToManage( unmovableParticle );
+	initWalls();
 	playMusic();
 }
+
+void GlobalItems::initWalls()
+{
+	GeometryInfo* pillarGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/pillar.pmd" , GraphicsBufferManager::globalBufferManager );
+	pillarGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	srand( ( unsigned int ) time( 0 ) );
+	if ( walls.size() ) destroyWalls();
+	for ( unsigned int i = 0; i < 10; ++i )
+	{
+		GameObject* wallInstance = GameObjectManager::globalGameObjectManager.addGameObject();
+		Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+		renderable3->initialize( 5 , 1 );
+		renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+		renderable3->geometryInfo = pillarGeo;
+		renderable3->shaderInfo = shader;
+		renderable3->alphaBlendingEnabled = false;
+		renderable3->culling = CT_BACK;
+		renderable3->addTexture( dogePatternTexture );
+		renderable3->setRenderableUniform( "tint" , PT_VEC4 , reinterpret_cast< const void* >( &defaultColor ) );
+		wallInstance->addComponent( renderable3 );
+		wallInstance->translate =
+			glm::vec3( Engine::RandomItemsGenerator::RandomRangedFloat(-100,100),
+			Engine::RandomItemsGenerator::RandomRangedFloat( -100 , 100 ) ,
+			0 );
+		wallInstance->rotate = glm::vec3(90,0,0);
+		wallInstance->scale = glm::vec3(10,0.5f,10);
+		Particle* theParticle = new Particle;
+		theParticle->freezeX = true;
+		theParticle->freezeY = true;
+		theParticle->freezeZ = true;
+		theParticle->mass = FLT_MAX;
+		theParticle->collisionRadius = 10;
+
+		wallInstance->addComponent( theParticle );
+		ParticleWorld::global.addParticleToManage( theParticle );
+		walls.push_back( theParticle );
+	}
+}
+
+void GlobalItems::destroyWalls()
+{
+	for ( unsigned int i = 0; i < walls.size(); ++i )
+	{
+		delete walls[i];
+	}
+	walls.clear();
+}
+
 void GlobalItems::updateLevel()
 {
 	Clock::update();
@@ -214,6 +267,7 @@ void GlobalItems::destroyLevel()
 	player1Particle = 0;
 	if ( player2Particle ) delete player2Particle;
 	player2Particle = 0;
+	destroyWalls();
 }
 
 void GlobalItems::initStart()
@@ -488,7 +542,7 @@ void GlobalItems::draw()
 	}
 }
 
-GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0) , state(GameStates::None)
+GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0), dogePatternTexture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0) , state(GameStates::None)
 {
 	ParticleWorld::global.initialize();
 }
