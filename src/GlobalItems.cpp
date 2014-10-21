@@ -217,6 +217,7 @@ void GlobalItems::destroyWalls()
 {
 	for ( unsigned int i = 0; i < walls.size(); ++i )
 	{
+		ParticleWorld::global.removeParticleToManage( walls[i] );
 		delete walls[i];
 	}
 	walls.clear();
