@@ -17,6 +17,9 @@
 #include <Graphics\GraphicsShaderManager.h>
 #include <iostream>
 #include <GlobalItems.h>
+#include <BulletCollisionEvent.h>
+#include <Physics\Particle.h>
+#include <Physics\ParticleWorld.h>
 Gun::Gun( GameObject* target )
 {
 	std::string errors;
@@ -39,12 +42,16 @@ Gun::Gun( GameObject* target )
 
 	bullet = GameObjectManager::globalGameObjectManager.addGameObject();
 	bullet->addComponent( bulletComponent = new BulletComponent() );
+	bullet->addComponent( collisionEvent = new BulletCollisionEvent );
+	bullet->addComponent( particle = new Particle );
+	ParticleWorld::global.addParticleToManage( particle );
+	particle->collisionRadius = 1;
+	particle->mass = 0.5;
 	bulletComponent->damage = 1;
 	bulletComponent->lifeTime = 0.5;
-	bulletComponent->range = 1;
-	bulletComponent->speed = 0.75;
+	bulletComponent->speed = 1000;
 	bulletComponent->target = target;
-	bullet->scale *= bulletComponent->range;
+	bullet->scale *= particle->collisionRadius;
 	bullet->addComponent( renderable );
 }
 void Gun::earlyUpdate()
@@ -62,4 +69,7 @@ void Gun::earlyUpdate()
 Gun::~Gun()
 {
 	delete bulletComponent;
+	delete collisionEvent;
+	ParticleWorld::global.removeParticleToManage( particle );
+	delete particle;
 }

@@ -28,6 +28,7 @@
 #include <Physics\ParticleWorld.h>
 #include <Misc\RandomItemsGenerator.h>
 #include <time.h>
+#include <PlayerPreCollide.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -101,6 +102,8 @@ void GlobalItems::initLevel()
 	player->addComponent( planeInput );
 	life1 = new Life;
 	player->addComponent( life1 );
+	player1PreCollide = new PlayerPreCollide;
+	player->addComponent( player1PreCollide );
 
 	player1Particle = new Particle;
 	player->addComponent( player1Particle );
@@ -125,7 +128,9 @@ void GlobalItems::initLevel()
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
-	
+	player2PreCollide = new PlayerPreCollide;
+	player2->addComponent( player2PreCollide );
+
 	player2Particle = new Particle;
 	player2->addComponent( player2Particle );
 	
@@ -262,12 +267,18 @@ void GlobalItems::destroyLevel()
 	gun2 = 0;
 	if ( zoomer ) delete zoomer;
 	zoomer = 0;
+
 	ParticleWorld::global.removeParticleToManage( player1Particle );
 	ParticleWorld::global.removeParticleToManage( player2Particle );
 	if ( player1Particle ) delete player1Particle;
 	player1Particle = 0;
 	if ( player2Particle ) delete player2Particle;
 	player2Particle = 0;
+	if ( player1PreCollide ) delete player1PreCollide;
+	player1PreCollide = 0;
+	if ( player2PreCollide ) delete player2PreCollide;
+	player2PreCollide = 0;
+
 	destroyWalls();
 }
 
@@ -543,7 +554,7 @@ void GlobalItems::draw()
 	}
 }
 
-GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0), dogePatternTexture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0) , state(GameStates::None)
+GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0), dogePatternTexture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0), player1PreCollide(0), player2PreCollide(0) , state(GameStates::None)
 {
 	ParticleWorld::global.initialize();
 }

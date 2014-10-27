@@ -10,11 +10,13 @@ class TwoDZoomCamera;
 class TwoDPlaneInput;
 class Gun;
 class Particle;
+class PlayerPreCollide;
 struct ShaderInfo;
 enum GameStates { None, Start , Level , Player1 , Player2 };
 struct GlobalItems
 {
 	GameObject* player , *player2 , *level;
+	PlayerPreCollide* player1PreCollide , *player2PreCollide;
 	Life* life1 , *life2;
 	AudioController* audio;
 	ShaderInfo* shader;

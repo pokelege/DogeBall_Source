@@ -5,6 +5,7 @@
 #include <DebugMemory.h>
 class BulletComponent : public Component
 {
+	friend class BulletCollisionEvent;
 	glm::vec3 direction;
 	float currentLifeTime;
 protected:
@@ -16,7 +17,6 @@ public:
 	GameObject* target;
 	float lifeTime;
 	float speed;
-	float range;
 	float damage;
 	void fire( glm::vec3& position , glm::vec3& direction );
 	virtual void earlyUpdate();
