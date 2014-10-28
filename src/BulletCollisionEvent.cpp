@@ -10,6 +10,7 @@ void BulletCollisionEvent::collisionEvent( Particle* other )
 	GlobalItems::global.playHit();
 	BulletComponent* thisComponent = parent->getComponent<BulletComponent>();
 	if ( !thisComponent ) return;
+	if ( thisComponent->currentLifeTime <= 0 ) return;
 	thisComponent->currentLifeTime = 0;
 	if ( !thisComponent->target ) return;
 	if ( (thisComponent->target != other->parent) ) return;
