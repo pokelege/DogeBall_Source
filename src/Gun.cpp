@@ -23,11 +23,11 @@
 Gun::Gun( GameObject* target )
 {
 	std::string errors;
-	std::string vert = FileReader( "Shaders/DiffuseVertex.glsl" );
-	std::string frag = FileReader( "Shaders/DiffuseFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/DiffuseVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DiffuseFragment.glsl" );
 	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
-	GeometryInfo* ballGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/ball.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* ballGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/ball.pmd" , GraphicsBufferManager::globalBufferManager );
 	ballGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	ballGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 

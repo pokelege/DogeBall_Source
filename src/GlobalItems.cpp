@@ -33,12 +33,12 @@ GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
 	if (!audio ) initAudio();
-	audio->playSound( "Audio/hit.mp3" );
+	audio->playSound( "assets/audio/hit.mp3" );
 }
 void GlobalItems::playMusic()
 {
 	if ( !audio ) initAudio();
-	audio->playSound( "Audio/music.mp3" , true );
+	audio->playSound( "assets/audio/music.mp3" , true );
 }
 
 void GlobalItems::initAudio()
@@ -58,31 +58,31 @@ void GlobalItems::destroyAudio()
 
 void GlobalItems::initPlayerTextures()
 {
-	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1.png" );
-	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2.png" );
-	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/DogePattern.png" );
+	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1.png" );
+	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2.png" );
+	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/DogePattern.png" );
 }
 
 void GlobalItems::initLevel()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
 	std::string errors;
-	std::string vert = FileReader( "Shaders/DiffuseVertex.glsl" );
-	std::string frag = FileReader( "Shaders/DiffuseFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/DiffuseVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DiffuseFragment.glsl" );
 	shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
 	GlobalItems::global.initPlayerTextures();
 
-	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/player.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/player.pmd" , GraphicsBufferManager::globalBufferManager );
 	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Level.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Level.png" );
 
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable->initialize( 5 , 1 );
@@ -181,7 +181,7 @@ void GlobalItems::initLevel()
 
 void GlobalItems::initWalls()
 {
-	GeometryInfo* pillarGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/pillar.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* pillarGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/pillar.pmd" , GraphicsBufferManager::globalBufferManager );
 	pillarGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	pillarGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 	srand( ( unsigned int ) time( 0 ) );
@@ -286,16 +286,16 @@ void GlobalItems::initStart()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
 	std::string errors;
-	std::string vert = FileReader( "Shaders/FlatVertex.glsl" );
-	std::string frag = FileReader( "Shaders/FlatFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
 	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Title.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Title.png" );
 
 	GameObjectManager::globalGameObjectManager.initialize(2);
 
@@ -355,16 +355,16 @@ void GlobalItems::initPlayer1Win()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
 	std::string errors;
-	std::string vert = FileReader( "Shaders/FlatVertex.glsl" );
-	std::string frag = FileReader( "Shaders/FlatFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
 	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player1Win.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.png" );
 
 	GameObjectManager::globalGameObjectManager.initialize( 2 );
 
@@ -424,16 +424,16 @@ void GlobalItems::initPlayer2Win()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
 	std::string errors;
-	std::string vert = FileReader( "Shaders/FlatVertex.glsl" );
-	std::string frag = FileReader( "Shaders/FlatFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
 	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "Models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "Textures/Player2Win.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2Win.png" );
 
 	GameObjectManager::globalGameObjectManager.initialize( 2 );
 
