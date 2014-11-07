@@ -13,7 +13,7 @@ void BulletCollisionEvent::collisionEvent( Particle* other )
 	if ( thisComponent->currentLifeTime <= 0 ) return;
 	thisComponent->currentLifeTime = 0;
 	if ( !thisComponent->target ) return;
-	if ( (thisComponent->target != other->parent) ) return;
+	if ( ( thisComponent->target != other->parent ) ) return;
 	Life* life = thisComponent->target->getComponent<Life>();
 	if ( !life ) return;
 	life->changeLife( -thisComponent->damage );
