@@ -58,9 +58,9 @@ void GlobalItems::destroyAudio()
 
 void GlobalItems::initPlayerTextures()
 {
-	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1.png" );
-	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2.png" );
-	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/DogePattern.png" );
+	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1.tex" );
+	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2.tex" );
+	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/DogePattern.tex" );
 }
 
 void GlobalItems::initLevel()
@@ -82,7 +82,7 @@ void GlobalItems::initLevel()
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Level.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Level.tex" );
 
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable->initialize( 5 , 1 );
@@ -295,7 +295,7 @@ void GlobalItems::initStart()
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Title.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Title.tex" );
 
 	GameObjectManager::globalGameObjectManager.initialize(2);
 
@@ -364,7 +364,7 @@ void GlobalItems::initPlayer1Win()
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.tex" );
 
 	GameObjectManager::globalGameObjectManager.initialize( 2 );
 
@@ -433,7 +433,7 @@ void GlobalItems::initPlayer2Win()
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2Win.png" );
+	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2Win.tex" );
 
 	GameObjectManager::globalGameObjectManager.initialize( 2 );
 
