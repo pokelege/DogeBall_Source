@@ -74,7 +74,7 @@ void GlobalItems::initLevel()
 
 	GlobalItems::global.initPlayerTextures();
 
-	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/player.pmd" , GraphicsBufferManager::globalBufferManager );
+	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/doge.pmd" , GraphicsBufferManager::globalBufferManager );
 	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
 
