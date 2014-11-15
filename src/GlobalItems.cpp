@@ -1,3 +1,4 @@
+#define GLM_FORCE_RADIANS
 #include <GlobalItems.h>
 #include <Graphics\GraphicsTextureManager.h>
 #include <Life.h>
@@ -29,6 +30,7 @@
 #include <Misc\RandomItemsGenerator.h>
 #include <time.h>
 #include <PlayerPreCollide.h>
+#include <Graphics\AnimationRenderingInfo.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -76,11 +78,22 @@ void GlobalItems::initLevel()
 
 	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/doge.pmd" , GraphicsBufferManager::globalBufferManager );
 	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	geometry->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
 	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
-
+	geometry->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	geometry->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	geometry->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
 	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
 	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
 	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	levelGeo->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	levelGeo->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	levelGeo->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
 
 	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Level.tex" );
 
@@ -95,8 +108,10 @@ void GlobalItems::initLevel()
 	GameObjectManager::globalGameObjectManager.initialize( 50 );
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
+	GameObject* renderableGameObject = GameObjectManager::globalGameObjectManager.addGameObject();
 	player->translate = glm::vec3( -50 , 0 , 0 );
-	player->addComponent( renderable );
+	renderableGameObject->addComponent( renderable );
+	player->addChild( renderableGameObject );
 	planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
@@ -108,6 +123,7 @@ void GlobalItems::initLevel()
 	player1Particle = new Particle;
 	player->addComponent( player1Particle );
 
+	player->addComponent( new AnimationRenderingInfo );
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
 	player2->translate = glm::vec3( 50 , 0 , 0 );
 	Renderable* renderable2 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
@@ -133,7 +149,7 @@ void GlobalItems::initLevel()
 
 	player2Particle = new Particle;
 	player2->addComponent( player2Particle );
-	
+	player2->addComponent( new AnimationRenderingInfo );
 	player2->addComponent( gun2 = new Gun( player ) );
 	gun2->key = VK_RSHIFT;
 
@@ -183,7 +199,14 @@ void GlobalItems::initWalls()
 {
 	GeometryInfo* pillarGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/pillar.pmd" , GraphicsBufferManager::globalBufferManager );
 	pillarGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
 	pillarGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	pillarGeo->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
+
 	srand( ( unsigned int ) time( 0 ) );
 	if ( walls.size() ) destroyWalls();
 	for ( unsigned int i = 0; i < 10; ++i )
@@ -203,7 +226,7 @@ void GlobalItems::initWalls()
 			glm::vec3( Engine::RandomItemsGenerator::RandomRangedFloat(-100,100),
 			Engine::RandomItemsGenerator::RandomRangedFloat( -100 , 100 ) ,
 			0 );
-		wallInstance->rotate = glm::vec3(90,0,0);
+		wallInstance->rotate = glm::angleAxis(glm::radians(90.0f),glm::vec3(1,0,0));
 		wallInstance->scale = glm::vec3(10,0.5f,10);
 		Particle* theParticle = new Particle;
 		theParticle->freezeX = true;
@@ -231,6 +254,7 @@ void GlobalItems::destroyWalls()
 void GlobalItems::updateLevel()
 {
 	Clock::update();
+	std::cout << player->rotate.x << ", " << player->rotate.y << ", " << player->rotate.z << std::endl;
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	ParticleWorld::global.update();
