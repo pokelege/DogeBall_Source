@@ -112,6 +112,7 @@ void GlobalItems::initLevel()
 	player->translate = glm::vec3( -50 , 0 , 0 );
 	renderableGameObject->addComponent( renderable );
 	player->addChild( renderableGameObject );
+	renderableGameObject->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	planeInput = new TwoDPlaneInput;
 	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
