@@ -117,14 +117,17 @@ void GlobalItems::initLevel()
 	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
 	life1 = new Life;
-	player->addComponent( life1 );
+	renderableGameObject->addComponent( life1 );
 	player1PreCollide = new PlayerPreCollide;
 	player->addComponent( player1PreCollide );
 
 	player1Particle = new Particle;
 	player->addComponent( player1Particle );
 
-	player->addComponent( new AnimationRenderingInfo );
+	renderableGameObject->addComponent( new AnimationRenderingInfo );
+
+	GameObject* renderableGameObject2 = GameObjectManager::globalGameObjectManager.addGameObject();
+
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
 	player2->translate = glm::vec3( 50 , 0 , 0 );
 	Renderable* renderable2 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
@@ -135,7 +138,8 @@ void GlobalItems::initLevel()
 	renderable2->alphaBlendingEnabled = false;
 	renderable2->culling = CT_NONE;
 	renderable2->addTexture( GlobalItems::global.player2Texture );
-	player2->addComponent( renderable2 );
+	renderableGameObject2->addComponent( renderable2 );
+	player2->addChild( renderableGameObject2 );
 	planeInput2 = new TwoDPlaneInput;
 	planeInput2->up = VK_UP;
 	planeInput2->down = VK_DOWN;
@@ -144,13 +148,13 @@ void GlobalItems::initLevel()
 	planeInput2->moveSensitivity = 1000;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
-	player2->addComponent( life2 );
+	renderableGameObject2->addComponent( life2 );
 	player2PreCollide = new PlayerPreCollide;
 	player2->addComponent( player2PreCollide );
 
 	player2Particle = new Particle;
 	player2->addComponent( player2Particle );
-	player2->addComponent( new AnimationRenderingInfo );
+	renderableGameObject2->addComponent( new AnimationRenderingInfo );
 	player2->addComponent( gun2 = new Gun( player ) );
 	gun2->key = VK_RSHIFT;
 
