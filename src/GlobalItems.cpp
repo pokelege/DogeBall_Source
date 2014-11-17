@@ -117,7 +117,7 @@ void GlobalItems::initLevel()
 	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
 	life1 = new Life;
-	renderableGameObject->addComponent( life1 );
+	player->addComponent( life1 );
 	player1PreCollide = new PlayerPreCollide;
 	player->addComponent( player1PreCollide );
 
@@ -139,6 +139,7 @@ void GlobalItems::initLevel()
 	renderable2->culling = CT_NONE;
 	renderable2->addTexture( GlobalItems::global.player2Texture );
 	renderableGameObject2->addComponent( renderable2 );
+	renderableGameObject2->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	player2->addChild( renderableGameObject2 );
 	planeInput2 = new TwoDPlaneInput;
 	planeInput2->up = VK_UP;
@@ -148,7 +149,7 @@ void GlobalItems::initLevel()
 	planeInput2->moveSensitivity = 1000;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
-	renderableGameObject2->addComponent( life2 );
+	player2->addComponent( life2 );
 	player2PreCollide = new PlayerPreCollide;
 	player2->addComponent( player2PreCollide );
 

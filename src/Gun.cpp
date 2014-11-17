@@ -31,7 +31,11 @@ Gun::Gun( GameObject* target )
 	GeometryInfo* ballGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/ball.pmd" , GraphicsBufferManager::globalBufferManager );
 	ballGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
 	ballGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
-
+	ballGeo->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	ballGeo->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	ballGeo->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	ballGeo->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	ballGeo->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
 	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable->initialize( 5 , 1 );
 	renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
@@ -59,10 +63,7 @@ void Gun::earlyUpdate()
 {
 	if ( !bulletComponent->parent->active && KeyInput::isDown( key ) )
 	{
-		glm::quat quaternion = glm::rotate( glm::quat() , glm::radians(parent->rotate.x) , glm::vec3( 1 , 0 , 0 ) ) *
-			glm::rotate( glm::quat() , glm::radians(parent->rotate.y) , glm::vec3( 0 , 1 , 0 ) ) *
-			glm::rotate( glm::quat() , glm::radians(parent->rotate.z) , glm::vec3( 0 , 0 , 1 ) );
-		glm::vec3 direction( glm::mat4_cast( quaternion ) * glm::vec4( 1,0,0 , 1 ) );
+		glm::vec3 direction( glm::mat4_cast( parent->rotate ) * glm::vec4( 1,0,0 , 0 ) );
 			bulletComponent->fire( parent->translate , direction );
 	}
 }
