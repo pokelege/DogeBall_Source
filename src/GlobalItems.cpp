@@ -199,6 +199,7 @@ void GlobalItems::initLevel()
 	//ParticleWorld::global.addParticleToManage( unmovableParticle );
 	initWalls();
 	playMusic();
+	Clock::update();
 }
 
 void GlobalItems::initWalls()
@@ -260,7 +261,7 @@ void GlobalItems::destroyWalls()
 void GlobalItems::updateLevel()
 {
 	Clock::update();
-	std::cout << player->rotate.x << ", " << player->rotate.y << ", " << player->rotate.z << std::endl;
+	//std::cout << player->rotate.x << ", " << player->rotate.y << ", " << player->rotate.z << std::endl;
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	ParticleWorld::global.update();
