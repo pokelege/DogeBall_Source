@@ -13,25 +13,45 @@ uniform mat4 modelToWorld;
 uniform mat4 animationMatrices[100];
 out vec2 uvsend;
 out vec4 positions;
-
+out vec3 normals;
 void main()
 {
 	vec4 animatedPosition = vec4(0,0,0,0);
+	vec4 animatedNormals = vec4(0,0,0,0);
 	if(blendingIndex.x >=0 || blendingIndex.y >= 0 || blendingIndex.z >= 0 || blendingIndex.w >= 0)
 	{
-	if( blendingIndex.x >= 0) animatedPosition += blendingWeight.x * animationMatrices[blendingIndex.x] * vec4(position, 1);
-	if( blendingIndex.y >= 0) animatedPosition += blendingWeight.y * animationMatrices[blendingIndex.y] * vec4(position, 1);
-	if( blendingIndex.z >= 0) animatedPosition += blendingWeight.z * animationMatrices[blendingIndex.z] * vec4(position, 1);
-	if( blendingIndex.w >= 0) animatedPosition += blendingWeight.w * animationMatrices[blendingIndex.w] * vec4(position, 1);
+		if( blendingIndex.x >= 0)
+		{
+			animatedPosition += blendingWeight.x * animationMatrices[blendingIndex.x] * vec4(position, 1);
+			animatedNormals += blendingWeight.x * animationMatrices[blendingIndex.x] * vec4(normal, 1);
+		}
+		if( blendingIndex.y >= 0)
+		{
+			animatedPosition += blendingWeight.y * animationMatrices[blendingIndex.y] * vec4(position, 1);
+			animatedNormals += blendingWeight.y * animationMatrices[blendingIndex.y] * vec4(normal, 1);
+		}
+		if( blendingIndex.z >= 0)
+		{
+			animatedPosition += blendingWeight.z * animationMatrices[blendingIndex.z] * vec4(position, 1);
+			animatedNormals += blendingWeight.z * animationMatrices[blendingIndex.z] * vec4(normal, 1);
+		}
+		if( blendingIndex.w >= 0)
+		{
+			animatedPosition += blendingWeight.w * animationMatrices[blendingIndex.w] * vec4(position, 1);
+			animatedNormals += blendingWeight.w * animationMatrices[blendingIndex.w] * vec4(normal, 1);
+		}
 	}
 	else
 	{
 		animatedPosition = vec4(position,1);
+		animatedNormals = vec4(normal, 1);
 	}
+	animatedNormals = vec4(normal, 1);
 	vec4 newPosition = modelToWorld * animatedPosition;
 	gl_Position = viewToProjection * worldToView * newPosition;
 	uvsend = uvs;
 	positions = newPosition;
+	normals = vec3(normalize(mat3(modelToWorld) * normalize(vec3(animatedNormals))));
 	//localSurface2World[0] = normalize(tangent);
 	//localSurface2World[1] = normalize(bitangent);
 	//localSurface2World[2] = normalize(normal);

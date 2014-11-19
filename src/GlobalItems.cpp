@@ -31,6 +31,8 @@
 #include <time.h>
 #include <PlayerPreCollide.h>
 #include <Graphics\AnimationRenderingInfo.h>
+#include <Graphics\GraphicsLightManager.h>
+#include <Graphics\Light.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -191,7 +193,16 @@ void GlobalItems::initLevel()
 	zoomer->minDistance = 2;
 	zoomer->zoomScale = 2;
 	view->addComponent( zoomer );
+	
+	Light* light = GraphicsLightManager::global.addLight();
+	//GameObject* lightBulb = GameObjectManager::globalGameObjectManager.addGameObject();
+	view->addComponent( light );
+	//view->addChild( lightBulb );
+	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
+
+
 	theTex = 0;
+		
 	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );
 
 	ParticleWorld::global.addParticleToManage( player1Particle );
@@ -278,6 +289,7 @@ void GlobalItems::updateLevel()
 }
 void GlobalItems::drawLevel()
 {
+	GraphicsSharedUniformManager::globalSharedUniformManager.updateLights();
 	GraphicsCameraManager::globalCameraManager.drawAllCameras();
 	GameObjectManager::globalGameObjectManager.lateDrawParents();
 }
