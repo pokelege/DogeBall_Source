@@ -12,6 +12,7 @@ class Gun;
 class Particle;
 class PlayerPreCollide;
 struct ShaderInfo;
+struct AnimationRenderingInfo;
 enum GameStates { None, Start , Level , Player1 , Player2 };
 struct GlobalItems
 {
@@ -26,6 +27,7 @@ struct GlobalItems
 	Gun* gun1 , *gun2;
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
+	AnimationRenderingInfo* animate1 , *animate2;
 	TwoDPlaneInput* planeInput , *planeInput2;
 	Particle* player1Particle , *player2Particle;
 	std::vector<Particle*> walls;

@@ -33,6 +33,7 @@
 #include <Graphics\AnimationRenderingInfo.h>
 #include <Graphics\GraphicsLightManager.h>
 #include <Graphics\Light.h>
+#include <DodgeInput.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -115,7 +116,7 @@ void GlobalItems::initLevel()
 	renderableGameObject->addComponent( renderable );
 	player->addChild( renderableGameObject );
 	renderableGameObject->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
-	planeInput = new TwoDPlaneInput;
+	planeInput = new DodgeInput;
 	planeInput->moveSensitivity = 1000;
 	player->addComponent( planeInput );
 	life1 = new Life;
@@ -126,7 +127,7 @@ void GlobalItems::initLevel()
 	player1Particle = new Particle;
 	player->addComponent( player1Particle );
 
-	renderableGameObject->addComponent( new AnimationRenderingInfo );
+	renderableGameObject->addComponent( animate1 = new AnimationRenderingInfo );
 
 	GameObject* renderableGameObject2 = GameObjectManager::globalGameObjectManager.addGameObject();
 
@@ -143,7 +144,7 @@ void GlobalItems::initLevel()
 	renderableGameObject2->addComponent( renderable2 );
 	renderableGameObject2->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	player2->addChild( renderableGameObject2 );
-	planeInput2 = new TwoDPlaneInput;
+	planeInput2 = new DodgeInput;
 	planeInput2->up = VK_UP;
 	planeInput2->down = VK_DOWN;
 	planeInput2->left = VK_LEFT;
@@ -157,7 +158,7 @@ void GlobalItems::initLevel()
 
 	player2Particle = new Particle;
 	player2->addComponent( player2Particle );
-	renderableGameObject2->addComponent( new AnimationRenderingInfo );
+	renderableGameObject2->addComponent(animate2 = new AnimationRenderingInfo );
 	player2->addComponent( gun2 = new Gun( player ) );
 	gun2->key = VK_RSHIFT;
 
@@ -310,6 +311,10 @@ void GlobalItems::destroyLevel()
 	gun2 = 0;
 	if ( zoomer ) delete zoomer;
 	zoomer = 0;
+	if ( animate1 ) delete animate1;
+	animate1 = 0;
+	if ( animate2 ) delete animate2;
+	animate2 = 0;
 
 	ParticleWorld::global.removeParticleToManage( player1Particle );
 	ParticleWorld::global.removeParticleToManage( player2Particle );
@@ -597,7 +602,7 @@ void GlobalItems::draw()
 	}
 }
 
-GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0), dogePatternTexture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0), player1Particle(0), player2Particle(0), player1PreCollide(0), player2PreCollide(0) , state(GameStates::None)
+GlobalItems::GlobalItems() :audio(0) , player1Texture(0) , player2Texture(0) , dogePatternTexture(0) , player(0) , player2(0) , level(0) , life1(0) , life2(0) , gun1(0) , gun2(0) , camera(0) , zoomer(0) , planeInput(0) , planeInput2(0) , player1Particle(0) , player2Particle(0) , player1PreCollide(0) , player2PreCollide(0) , state(GameStates::None) , animate1(0) , animate2(0)
 {
 	ParticleWorld::global.initialize();
 }
