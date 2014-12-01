@@ -34,6 +34,7 @@
 #include <Graphics\GraphicsLightManager.h>
 #include <Graphics\Light.h>
 #include <DodgeInput.h>
+#include <GL\glew.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -71,6 +72,7 @@ void GlobalItems::initPlayerTextures()
 void GlobalItems::initLevel()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
+	GraphicsCameraManager::globalCameraManager.initialize( 2 );
 	std::string errors;
 	std::string vert = FileReader( "assets/shaders/DiffuseVertex.glsl" );
 	std::string frag = FileReader( "assets/shaders/DiffuseFragment.glsl" );
@@ -196,12 +198,21 @@ void GlobalItems::initLevel()
 	view->addComponent( zoomer );
 	
 	Light* light = GraphicsLightManager::global.addLight();
-	//GameObject* lightBulb = GameObjectManager::globalGameObjectManager.addGameObject();
-	view->addComponent( light );
-	//view->addChild( lightBulb );
+	GameObject* lightBulb = GameObjectManager::globalGameObjectManager.addGameObject();
+	lightBulb->addComponent( light );
+	view->addChild( lightBulb );
 	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
+	lightBulb->translate = glm::vec3( 0 , 0 , -3 );
 
-
+	Camera* lightCamera = GraphicsCameraManager::globalCameraManager.addCamera();
+	lightCamera->initializeRenderManagers();
+	lightCamera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	lightCamera->FOV = 60.0f;
+	lightCamera->nearestObject = 0.01f;
+	lightCamera->attatchFrameBuffer( 0 , depthTexture = GraphicsTextureManager::globalTextureManager.addTexture(0,512,512,1, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT) );
+	lightBulb->addComponent( lightCamera );
+	lightCamera->drawFrameBuffer = true;
+	lightCamera->drawCamera = false;
 	theTex = 0;
 		
 	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );

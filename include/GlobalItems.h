@@ -24,6 +24,7 @@ struct GlobalItems
 	TextureInfo* player1Texture;
 	TextureInfo* player2Texture;
 	TextureInfo* dogePatternTexture;
+	TextureInfo* depthTexture;
 	Gun* gun1 , *gun2;
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
