@@ -114,12 +114,14 @@ void GlobalItems::initLevel()
 
 	player = GameObjectManager::globalGameObjectManager.addGameObject();
 	GameObject* renderableGameObject = GameObjectManager::globalGameObjectManager.addGameObject();
-	player->translate = glm::vec3( -50 , 0 , 0 );
+	player->translate = glm::vec3( -50 , 0 , 3 );
+	player->scale = glm::vec3( 5 , 5 , 5 );
 	renderableGameObject->addComponent( renderable );
 	player->addChild( renderableGameObject );
 	renderableGameObject->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	planeInput = new DodgeInput;
 	planeInput->moveSensitivity = 1000;
+	planeInput->dodgeForce = 50.0f;
 	player->addComponent( planeInput );
 	life1 = new Life;
 	player->addComponent( life1 );
@@ -128,13 +130,15 @@ void GlobalItems::initLevel()
 
 	player1Particle = new Particle;
 	player->addComponent( player1Particle );
-
+	player1Particle->collisionRadius = 5;
+	player1Particle->freezeZ = true;
 	renderableGameObject->addComponent( animate1 = new AnimationRenderingInfo );
 
 	GameObject* renderableGameObject2 = GameObjectManager::globalGameObjectManager.addGameObject();
 
 	player2 = GameObjectManager::globalGameObjectManager.addGameObject();
-	player2->translate = glm::vec3( 50 , 0 , 0 );
+	player2->translate = glm::vec3( 50 , 0 , 3 );
+	player2->scale = glm::vec3( 5 , 5 , 5 );
 	Renderable* renderable2 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
 	renderable2->initialize( 5 , 1 );
 	renderable2->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
@@ -152,6 +156,7 @@ void GlobalItems::initLevel()
 	planeInput2->left = VK_LEFT;
 	planeInput2->right = VK_RIGHT;
 	planeInput2->moveSensitivity = 1000;
+	planeInput2->dodgeForce = 50.0f;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
@@ -160,6 +165,8 @@ void GlobalItems::initLevel()
 
 	player2Particle = new Particle;
 	player2->addComponent( player2Particle );
+	player2Particle->collisionRadius = 5;
+	player2Particle->freezeZ = true;
 	renderableGameObject2->addComponent(animate2 = new AnimationRenderingInfo );
 	player2->addComponent( gun2 = new Gun( player ) );
 	gun2->key = VK_RSHIFT;
@@ -181,8 +188,31 @@ void GlobalItems::initLevel()
 	level->addComponent( renderable3 );
 
 	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
+
+	Light* light = GraphicsLightManager::global.addLight();
+	lightBulb = GameObjectManager::globalGameObjectManager.addGameObject();
+	lightBulb->addComponent( light );
+	//view->addChild( lightBulb );
+	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
+	lightBulb->translate = glm::vec3( 0 , 0 , 50);
+
+	Camera* lightCamera = GraphicsCameraManager::globalCameraManager.addCamera();
+	lightCamera->initializeRenderManagers();
+	lightCamera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	lightCamera->FOV = 60.0f;
+	lightCamera->nearestObject = 0.01f;
+	lightCamera->direction = glm::normalize( glm::vec3( 0 , 0 , -1 ) );
+	lightCamera->attatchFrameBuffer( 0 , depthTexture = GraphicsTextureManager::globalTextureManager.addTexture( 0 , 1024 , 1024 , 1 , GL_DEPTH_COMPONENT32 , GL_DEPTH_COMPONENT , GL_FLOAT ) );
+	lightBulb->addComponent( lightCamera );
+	lightCamera->drawFrameBuffer = true;
+	lightCamera->drawCamera = false;
+	light->setDepthTexture( depthTexture );
+	
+
+	
 	camera = GraphicsCameraManager::globalCameraManager.addCamera();
 	camera->initializeRenderManagers();
+	camera->addLights( &GraphicsLightManager::global );
 	camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
 	camera->FOV = 60.0f;
 	camera->nearestObject = 0.01f;
@@ -192,27 +222,11 @@ void GlobalItems::initLevel()
 	zoomer->initialize( 2 );
 	zoomer->addGameObjectToTrack( player );
 	zoomer->addGameObjectToTrack( player2 );
-	zoomer->maxDistance = 50;
-	zoomer->minDistance = 2;
+	zoomer->maxDistance = 100;
+	zoomer->minDistance = 20;
 	zoomer->zoomScale = 2;
 	view->addComponent( zoomer );
-	
-	Light* light = GraphicsLightManager::global.addLight();
-	GameObject* lightBulb = GameObjectManager::globalGameObjectManager.addGameObject();
-	lightBulb->addComponent( light );
-	view->addChild( lightBulb );
-	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
-	lightBulb->translate = glm::vec3( 0 , 0 , -3 );
 
-	Camera* lightCamera = GraphicsCameraManager::globalCameraManager.addCamera();
-	lightCamera->initializeRenderManagers();
-	lightCamera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
-	lightCamera->FOV = 60.0f;
-	lightCamera->nearestObject = 0.01f;
-	lightCamera->attatchFrameBuffer( 0 , depthTexture = GraphicsTextureManager::globalTextureManager.addTexture(0,512,512,1, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT) );
-	lightBulb->addComponent( lightCamera );
-	lightCamera->drawFrameBuffer = true;
-	lightCamera->drawCamera = false;
 	theTex = 0;
 		
 	defaultColor = glm::vec4( 1 , 1 , 1 , 1 );
@@ -257,13 +271,13 @@ void GlobalItems::initWalls()
 			Engine::RandomItemsGenerator::RandomRangedFloat( -100 , 100 ) ,
 			0 );
 		wallInstance->rotate = glm::angleAxis(glm::radians(90.0f),glm::vec3(1,0,0));
-		wallInstance->scale = glm::vec3(10,0.5f,10);
+		wallInstance->scale = glm::vec3(20,1,20);
 		Particle* theParticle = new Particle;
 		theParticle->freezeX = true;
 		theParticle->freezeY = true;
 		theParticle->freezeZ = true;
 		theParticle->mass = FLT_MAX;
-		theParticle->collisionRadius = 10;
+		theParticle->collisionRadius = 20;
 
 		wallInstance->addComponent( theParticle );
 		ParticleWorld::global.addParticleToManage( theParticle );
@@ -290,6 +304,7 @@ void GlobalItems::updateLevel()
 	ParticleWorld::global.update();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
+	lightBulb->getComponent<Camera>()->direction = glm::normalize( ( 0.5f * ( player->translate + player2->translate ) ) - lightBulb->translate );
 	if ( !player->getComponent<Life>()->changeLife( 0 ) )
 	{
 		changeState( GameStates::Player2 );

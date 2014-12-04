@@ -7,7 +7,7 @@ struct TextureInfo;
 class Life;
 class Camera;
 class TwoDZoomCamera;
-class TwoDPlaneInput;
+class DodgeInput;
 class Gun;
 class Particle;
 class PlayerPreCollide;
@@ -16,6 +16,7 @@ struct AnimationRenderingInfo;
 enum GameStates { None, Start , Level , Player1 , Player2 };
 struct GlobalItems
 {
+	GameObject* lightBulb;
 	GameObject* player , *player2 , *level;
 	PlayerPreCollide* player1PreCollide , *player2PreCollide;
 	Life* life1 , *life2;
@@ -29,7 +30,7 @@ struct GlobalItems
 	Camera* camera;
 	TwoDZoomCamera* zoomer;
 	AnimationRenderingInfo* animate1 , *animate2;
-	TwoDPlaneInput* planeInput , *planeInput2;
+	DodgeInput* planeInput , *planeInput2;
 	Particle* player1Particle , *player2Particle;
 	std::vector<Particle*> walls;
 	GameStates state;
