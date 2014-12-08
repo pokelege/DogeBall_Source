@@ -120,7 +120,7 @@ void GlobalItems::initLevel()
 	player->addChild( renderableGameObject );
 	renderableGameObject->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	planeInput = new DodgeInput;
-	planeInput->moveSensitivity = 1000;
+	planeInput->moveSensitivity = 2000;
 	planeInput->dodgeForce = 50.0f;
 	player->addComponent( planeInput );
 	life1 = new Life;
@@ -155,7 +155,7 @@ void GlobalItems::initLevel()
 	planeInput2->down = VK_DOWN;
 	planeInput2->left = VK_LEFT;
 	planeInput2->right = VK_RIGHT;
-	planeInput2->moveSensitivity = 1000;
+	planeInput2->moveSensitivity = 2000;
 	planeInput2->dodgeForce = 50.0f;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
