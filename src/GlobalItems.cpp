@@ -794,40 +794,6 @@ void GlobalItems::initPlayer1Win()
 		addWin();
 	}
 	playWin();
-	//CommonGraphicsCommands::initializeGlobalGraphics( );
-	//std::string errors;
-	//std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
-	//std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
-	//ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
-	//std::cout << errors.c_str( ) << std::endl;
-
-	//GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
-	//levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
-	//levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
-
-	//TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.tex" );
-
-	//GameObjectManager::globalGameObjectManager.initialize( 2 );
-
-	//level = GameObjectManager::globalGameObjectManager.addGameObject( );
-	//Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
-	//renderable3->initialize( 5 , 1 );
-	//renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
-	//renderable3->geometryInfo = levelGeo;
-	//renderable3->shaderInfo = shader;
-	//renderable3->alphaBlendingEnabled = false;
-	//renderable3->culling = CT_NONE;
-	//renderable3->addTexture( levelTexture );
-	//level->addComponent( renderable3 );
-	//theTex = 0;
-
-	//GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject( );
-	//camera = GraphicsCameraManager::globalCameraManager.addCamera( );
-	//camera->initializeRenderManagers( );
-	//camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
-	//camera->FOV = 60.0f;
-	//camera->nearestObject = 0.01f;
-	//view->addComponent( camera );
 }
 void GlobalItems::drawPlayer1Win()
 {
