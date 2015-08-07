@@ -130,6 +130,40 @@ void GlobalItems::initDogeWords()
 		vis->makeVisible( 0 );
 		pain.push_back( vis );
 	}
+
+
+	QDirIterator missDir( "assets/textures/DogeWord/Miss/" );
+	while ( missDir.hasNext( ) )
+	{
+		GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject( );
+		QFileInfo theFile = missDir.next( );
+		if ( theFile.suffix( ).compare( "tex" ) ) continue;
+		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( theFile.absoluteFilePath( ).toUtf8( ) );
+		Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+		renderable->initialize( 5 , 1 );
+		renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+		renderable->geometryInfo = levelGeo;
+		renderable->shaderInfo = dogeShader;
+		renderable->alphaBlendingEnabled = true;
+		renderable->culling = CT_NONE;
+		renderable->addTexture( tex );
+		renderable->depthTestEnabled = false;
+		object->addComponent( renderable );
+		TextureParams par = tex->getParams( );
+		if ( std::max( par.width , par.height ) == par.width )
+		{
+			object->scale = 0.25f * glm::vec3( ( float ) par.width / par.width , ( float ) par.height / par.width , 1 );
+		}
+		else
+		{
+			object->scale = 0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+		}
+
+		TimedVisibility* vis = new TimedVisibility;
+		object->addComponent( vis );
+		vis->makeVisible( 0 );
+		miss.push_back( vis );
+	}
 }
 
 void GlobalItems::addPain( const glm::vec3& worldPos )
@@ -149,13 +183,35 @@ void GlobalItems::addPain( const glm::vec3& worldPos )
 	vis->parent->translate = worldPos;
 }
 
+void GlobalItems::addMiss( const glm::vec3& worldPos )
+{
+	if ( !miss.size( ) ) return;
+	TimedVisibility* vis = miss.at( rand( ) % miss.size( ) );
+	if ( !vis || vis->parent->active )
+	{
+		vis = 0;
+		for ( unsigned int i = 0; i < miss.size( ) && !vis; ++i )
+		{
+			if ( !miss.at( i )->parent->active ) vis = miss.at( i );
+		}
+	}
+	if ( !vis ) return;
+	vis->makeVisible( );
+	vis->parent->translate = worldPos;
+}
+
 void GlobalItems::destroyDogeWords( )
 {
 	for each ( TimedVisibility* var in pain )
 	{
 		delete var;
 	}
+	for each ( TimedVisibility* var in miss )
+	{
+		delete var;
+	}
 	pain.clear();
+	miss.clear();
 }
 
 void GlobalItems::initLevel()

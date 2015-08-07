@@ -33,7 +33,7 @@ struct GlobalItems
 	DodgeInput* planeInput , *planeInput2;
 	Particle* player1Particle , *player2Particle;
 	std::vector<Particle*> walls;
-	std::vector<TimedVisibility*> pain;
+	std::vector<TimedVisibility*> pain, miss;
 	GameStates state;
 	int theTex;
 	glm::vec4 defaultColor;
@@ -42,6 +42,7 @@ struct GlobalItems
 	void initWalls();
 	void initDogeWords();
 	void addPain( const glm::vec3& worldPos );
+	void addMiss( const glm::vec3& worldPos );
 	void destroyDogeWords( );
 	void destroyWalls();
 	void initLevel();

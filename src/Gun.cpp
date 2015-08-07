@@ -59,6 +59,7 @@ Gun::Gun( GameObject* target )
 	bulletComponent->target = target;
 	bullet->scale *= particle->collisionRadius;
 	bullet->addComponent( renderable );
+	bullet->active = false;
 }
 void Gun::earlyUpdate()
 {

@@ -11,7 +11,9 @@ void BulletCollisionEvent::collisionEvent( Particle* other )
 	BulletComponent* thisComponent = parent->getComponent<BulletComponent>();
 	if ( !thisComponent ) return;
 	if ( thisComponent->currentLifeTime <= 0 ) return;
+	thisComponent->parent->getComponent<Particle>( )->velocity = glm::vec3( );
 	thisComponent->currentLifeTime = 0;
+	thisComponent->parent->active = false;
 	if ( !thisComponent->target ) return;
 	if ( ( thisComponent->target != other->parent ) ) return;
 	Life* life = thisComponent->target->getComponent<Life>();
