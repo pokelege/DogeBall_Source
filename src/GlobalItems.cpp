@@ -127,14 +127,13 @@ void GlobalItems::initDogeWords()
 
 		TimedVisibility* vis = new TimedVisibility;
 		object->addComponent( vis );
-		//vis->makeVisible( 0 );
+		vis->makeVisible( 0 );
 		pain.push_back( vis );
 	}
 }
 
 void GlobalItems::addPain( const glm::vec3& worldPos )
 {
-	worldPos;
 	if ( !pain.size() ) return;
 	TimedVisibility* vis = pain.at( rand() % pain.size() );
 	if ( !vis || vis->parent->active )
@@ -147,6 +146,7 @@ void GlobalItems::addPain( const glm::vec3& worldPos )
 	}
 	if ( !vis ) return;
 	vis->makeVisible();
+	vis->parent->translate = worldPos;
 }
 
 void GlobalItems::destroyDogeWords( )

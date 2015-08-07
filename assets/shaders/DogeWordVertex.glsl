@@ -8,7 +8,7 @@ out vec2 uvsend;
 void main()
 {
 
-	vec4 perpPos = viewToProjection*modelToWorld*vec4(0,0,100,1);
+	vec4 perpPos = viewToProjection*worldToView*modelToWorld*vec4(0,0,0,1);
 	vec3 perpPos2 = vec3(perpPos) / perpPos.w;
 	vec2 perpPos3 = vec2(perpPos2) / perpPos2.z;
 	vec4 newPosition = vec4(vec2(mat3(modelToWorld) * position) + perpPos3,0,1);

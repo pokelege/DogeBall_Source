@@ -8,5 +8,5 @@ out vec4 newColor;
 void main()
 {
 	newColor = texture2D(colorTexture, uvsend);
-	newColor*= color;
+	newColor*=  color;
 };

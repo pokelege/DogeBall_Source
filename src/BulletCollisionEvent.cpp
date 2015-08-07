@@ -17,4 +17,5 @@ void BulletCollisionEvent::collisionEvent( Particle* other )
 	Life* life = thisComponent->target->getComponent<Life>();
 	if ( !life ) return;
 	life->changeLife( -thisComponent->damage );
+	GlobalItems::global.addPain( thisComponent->target->translate );
 }
