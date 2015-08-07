@@ -36,6 +36,7 @@ struct GlobalItems
 	GameStates state;
 	int theTex;
 	glm::vec4 defaultColor;
+	bool doge1falling , doge2falling;
 	void initPlayerTextures();
 	void initWalls();
 	void destroyWalls();
@@ -61,6 +62,7 @@ struct GlobalItems
 
 	void playHit();
 	void playMusic();
+	void playFall();
 	void initAudio();
 	void destroyAudio();
 	void destroyAll();

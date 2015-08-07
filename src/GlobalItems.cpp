@@ -47,6 +47,12 @@ void GlobalItems::playMusic()
 	audio->playSound( "assets/audio/music.mp3" , true );
 }
 
+void GlobalItems::playFall( )
+{
+	if ( !audio ) initAudio( );
+	audio->playSound( "assets/audio/fall.wav" );
+}
+
 void GlobalItems::initAudio()
 {
 	if ( audio ) destroyAudio();
@@ -71,6 +77,7 @@ void GlobalItems::initPlayerTextures()
 
 void GlobalItems::initLevel()
 {
+	
 	CommonGraphicsCommands::initializeGlobalGraphics();
 	GraphicsCameraManager::globalCameraManager.initialize( 2 );
 	std::string errors;
@@ -234,6 +241,8 @@ void GlobalItems::initLevel()
 	ParticleWorld::global.addParticleToManage( player1Particle );
 	ParticleWorld::global.addParticleToManage( player2Particle );
 	//ParticleWorld::global.addParticleToManage( unmovableParticle );
+	doge1falling = false;
+	doge2falling = false;
 	initWalls();
 	playMusic();
 	Clock::update();
@@ -299,17 +308,37 @@ void GlobalItems::updateLevel()
 {
 	Clock::update();
 	//std::cout << player->rotate.x << ", " << player->rotate.y << ", " << player->rotate.z << std::endl;
+	if ( !doge1falling && (player->getWorldTranslate().x > 100 || player->getWorldTranslate().x < -100 || player->getWorldTranslate().y > 100 || player->getWorldTranslate().y < -100) )
+	{
+		playFall();
+		doge1falling = true;
+	}
+	if ( !doge2falling && ( player2->getWorldTranslate( ).x > 100 || player2->getWorldTranslate( ).x < -100 || player2->getWorldTranslate( ).y > 100 || player2->getWorldTranslate( ).y < -100) )
+	{
+		playFall();
+		doge2falling = true;
+	}
+
+	if ( doge1falling )
+	{
+		player->translate.z -= 50 * Clock::dt;
+	}
+	if ( doge2falling )
+	{
+		player2->translate.z -= 50 * Clock::dt;
+	}
+
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	ParticleWorld::global.update();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
 	lightBulb->getComponent<Camera>()->direction = glm::normalize( ( 0.5f * ( player->translate + player2->translate ) ) - lightBulb->translate );
-	if ( !player->getComponent<Life>()->changeLife( 0 ) )
+	if ( !player->getComponent<Life>( )->changeLife( 0 ) || player->getWorldTranslate( ).z < -100 )
 	{
 		changeState( GameStates::Player2 );
 	}
-	else if ( !player2->getComponent<Life>()->changeLife( 0 ) )
+	else if ( !player2->getComponent<Life>( )->changeLife( 0 ) || player2->getWorldTranslate( ).z < -100 )
 	{
 		changeState( GameStates::Player1 );
 	}
