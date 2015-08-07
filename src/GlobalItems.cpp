@@ -57,6 +57,12 @@ void GlobalItems::playFall( )
 	audio->playSound( "assets/audio/fall.wav" );
 }
 
+void GlobalItems::playFail( )
+{
+	if ( !audio ) initAudio( );
+	audio->playSound( "assets/audio/fail.wav" );
+}
+
 void GlobalItems::initAudio()
 {
 	if ( audio ) destroyAudio();

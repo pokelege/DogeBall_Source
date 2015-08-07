@@ -23,6 +23,7 @@ void BulletComponent::update()
 		parent->active = false;
 		parent->getComponent<Particle>()->velocity = glm::vec3();
 		GlobalItems::global.addMiss( parent->translate );
+		GlobalItems::global.playFail();
 	}
 }
 void BulletComponent::lateUpdate()
