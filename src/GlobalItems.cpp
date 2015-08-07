@@ -37,6 +37,8 @@
 #include <DodgeInput.h>
 #include <GL\glew.h>
 #include <QtCore\QDirIterator>
+#include <Graphics\TextureInfo.h>
+#include <DebugMemory.h>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -82,7 +84,7 @@ void GlobalItems::initDogeWords()
 	//clear the pain
 	pain.clear();
 	std::string errors;
-	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	std::string vert = FileReader( "assets/shaders/DogeWordVertex.glsl" );
 	std::string frag = FileReader( "assets/shaders/DogeWordFragment.glsl" );
 	ShaderInfo* dogeShader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
 	std::cout << errors.c_str( ) << std::endl;
@@ -100,7 +102,9 @@ void GlobalItems::initDogeWords()
 	while ( painDir.hasNext() )
 	{
 		GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject();
-		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( painDir.next( ).toUtf8() );
+		QFileInfo theFile = painDir.next();
+		if ( theFile.suffix().compare( "tex" ) ) continue;
+		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture(theFile.absoluteFilePath().toUtf8() );
 		Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
 		renderable->initialize( 5 , 1 );
 		renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
@@ -111,15 +115,26 @@ void GlobalItems::initDogeWords()
 		renderable->addTexture( tex );
 		renderable->depthTestEnabled = false;
 		object->addComponent( renderable );
+		TextureParams par = tex->getParams();
+		if ( std::max( par.width , par.height ) == par.width )
+		{
+			object->scale = 0.25f * glm::vec3( ( float )par.width / par.width , (float)par.height / par.width, 1 );
+		}
+		else
+		{
+			object->scale =  0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+		}
+
 		TimedVisibility* vis = new TimedVisibility;
 		object->addComponent( vis );
-		vis->makeVisible( 0 );
+		//vis->makeVisible( 0 );
 		pain.push_back( vis );
 	}
 }
 
 void GlobalItems::addPain( const glm::vec3& worldPos )
 {
+	worldPos;
 	if ( !pain.size() ) return;
 	TimedVisibility* vis = pain.at( rand() % pain.size() );
 	if ( !vis || vis->parent->active )
@@ -311,8 +326,8 @@ void GlobalItems::initLevel()
 	//ParticleWorld::global.addParticleToManage( unmovableParticle );
 	doge1falling = false;
 	doge2falling = false;
-	initDogeWords();
 	initWalls();
+	initDogeWords( );
 	playMusic();
 	Clock::update();
 }

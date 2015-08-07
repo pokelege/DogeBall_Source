@@ -21,6 +21,7 @@
 #include <BulletCollisionEvent.h>
 #include <Physics\Particle.h>
 #include <Physics\ParticleWorld.h>
+#include <DebugMemory.h>
 Gun::Gun( GameObject* target )
 {
 	std::string errors;

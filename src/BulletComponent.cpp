@@ -4,6 +4,7 @@
 #include <Life.h>
 #include <GlobalItems.h>
 #include <Physics\Particle.h>
+#include <DebugMemory.h>
 void BulletComponent::attatch( GameObject* parent )
 {
 	this->parent = parent;
