@@ -55,7 +55,7 @@ Gun::Gun( GameObject* target )
 	particle->mass = 0.5;
 	bulletComponent->damage = 1;
 	bulletComponent->lifeTime = 0.5;
-	bulletComponent->speed = 1000;
+	bulletComponent->speed = 2000;
 	bulletComponent->target = target;
 	bullet->scale *= particle->collisionRadius;
 	bullet->addComponent( renderable );

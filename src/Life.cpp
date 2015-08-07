@@ -2,7 +2,7 @@
 #include <Graphics\RenderableInfo.h>
 #include <Core\GameObject.h>
 #include <DebugMemory.h>
-Life::Life() : fullLife(5) , lowLifeColor(glm::vec4(1,0,0,1))
+Life::Life() : fullLife(20) , lowLifeColor(glm::vec4(1,0,0,1))
 {
 	fullRecover();
 }

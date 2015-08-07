@@ -101,68 +101,76 @@ void GlobalItems::initDogeWords()
 	QDirIterator painDir( "assets/textures/DogeWord/Pain/" );
 	while ( painDir.hasNext() )
 	{
-		GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject();
 		QFileInfo theFile = painDir.next();
 		if ( theFile.suffix().compare( "tex" ) ) continue;
 		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture(theFile.absoluteFilePath().toUtf8() );
-		Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
-		renderable->initialize( 5 , 1 );
-		renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
-		renderable->geometryInfo = levelGeo;
-		renderable->shaderInfo = dogeShader;
-		renderable->alphaBlendingEnabled = true;
-		renderable->culling = CT_NONE;
-		renderable->addTexture( tex );
-		renderable->depthTestEnabled = false;
-		object->addComponent( renderable );
-		TextureParams par = tex->getParams();
-		if ( std::max( par.width , par.height ) == par.width )
+		for ( unsigned int i = 0; i < 5; ++i )
 		{
-			object->scale = 0.25f * glm::vec3( ( float )par.width / par.width , (float)par.height / par.width, 1 );
-		}
-		else
-		{
-			object->scale =  0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
-		}
+			GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject( );
+			Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+			renderable->initialize( 5 , 1 );
+			renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+			renderable->geometryInfo = levelGeo;
+			renderable->shaderInfo = dogeShader;
+			renderable->alphaBlendingEnabled = true;
+			renderable->culling = CT_NONE;
+			renderable->addTexture( tex );
+			renderable->depthTestEnabled = false;
+			object->addComponent( renderable );
+			TextureParams par = tex->getParams( );
+			if ( std::max( par.width , par.height ) == par.width )
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.width , ( float ) par.height / par.width , 1 );
+			}
+			else
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+			}
 
-		TimedVisibility* vis = new TimedVisibility;
-		object->addComponent( vis );
-		vis->makeVisible( 0 );
-		pain.push_back( vis );
+			TimedVisibility* vis = new TimedVisibility;
+			object->addComponent( vis );
+			vis->makeVisible( 0 );
+			pain.push_back( vis );
+		}
 	}
 
 
 	QDirIterator missDir( "assets/textures/DogeWord/Miss/" );
 	while ( missDir.hasNext( ) )
 	{
-		GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject( );
+		
 		QFileInfo theFile = missDir.next( );
 		if ( theFile.suffix( ).compare( "tex" ) ) continue;
 		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( theFile.absoluteFilePath( ).toUtf8( ) );
-		Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
-		renderable->initialize( 5 , 1 );
-		renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
-		renderable->geometryInfo = levelGeo;
-		renderable->shaderInfo = dogeShader;
-		renderable->alphaBlendingEnabled = true;
-		renderable->culling = CT_NONE;
-		renderable->addTexture( tex );
-		renderable->depthTestEnabled = false;
-		object->addComponent( renderable );
-		TextureParams par = tex->getParams( );
-		if ( std::max( par.width , par.height ) == par.width )
+		for ( unsigned int i = 0; i < 5; ++i )
 		{
-			object->scale = 0.25f * glm::vec3( ( float ) par.width / par.width , ( float ) par.height / par.width , 1 );
-		}
-		else
-		{
-			object->scale = 0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+			GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject();
+			Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
+			renderable->initialize( 5 , 1 );
+			renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+			renderable->geometryInfo = levelGeo;
+			renderable->shaderInfo = dogeShader;
+			renderable->alphaBlendingEnabled = true;
+			renderable->culling = CT_NONE;
+			renderable->addTexture( tex );
+			renderable->depthTestEnabled = false;
+			object->addComponent( renderable );
+			TextureParams par = tex->getParams();
+			if ( std::max( par.width , par.height ) == par.width )
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.width , ( float ) par.height / par.width , 1 );
+			}
+			else
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+			}
+
+			TimedVisibility* vis = new TimedVisibility;
+			object->addComponent( vis );
+			vis->makeVisible( 0 );
+			miss.push_back( vis );
 		}
 
-		TimedVisibility* vis = new TimedVisibility;
-		object->addComponent( vis );
-		vis->makeVisible( 0 );
-		miss.push_back( vis );
 	}
 }
 
