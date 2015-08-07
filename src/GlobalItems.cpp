@@ -28,6 +28,7 @@
 #include <Physics\Particle.h>
 #include <Physics\ParticleWorld.h>
 #include <Misc\RandomItemsGenerator.h>
+#include <TimedVisibility.h>
 #include <time.h>
 #include <PlayerPreCollide.h>
 #include <Graphics\AnimationRenderingInfo.h>
@@ -35,6 +36,7 @@
 #include <Graphics\Light.h>
 #include <DodgeInput.h>
 #include <GL\glew.h>
+#include <QtCore\QDirIterator>
 GlobalItems GlobalItems::global;
 void GlobalItems::playHit()
 {
@@ -73,6 +75,72 @@ void GlobalItems::initPlayerTextures()
 	player1Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1.tex" );
 	player2Texture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2.tex" );
 	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/DogePattern.tex" );
+}
+
+void GlobalItems::initDogeWords()
+{
+	//clear the pain
+	pain.clear();
+	std::string errors;
+	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DogeWordFragment.glsl" );
+	ShaderInfo* dogeShader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
+	std::cout << errors.c_str( ) << std::endl;
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
+	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	levelGeo->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	levelGeo->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	levelGeo->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
+
+	QDirIterator painDir( "assets/textures/DogeWord/Pain/" );
+	while ( painDir.hasNext() )
+	{
+		GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject();
+		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( painDir.next( ).toUtf8() );
+		Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+		renderable->initialize( 5 , 1 );
+		renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+		renderable->geometryInfo = levelGeo;
+		renderable->shaderInfo = dogeShader;
+		renderable->alphaBlendingEnabled = true;
+		renderable->culling = CT_NONE;
+		renderable->addTexture( tex );
+		renderable->depthTestEnabled = false;
+		object->addComponent( renderable );
+		TimedVisibility* vis = new TimedVisibility;
+		object->addComponent( vis );
+		vis->makeVisible( 0 );
+		pain.push_back( vis );
+	}
+}
+
+void GlobalItems::addPain( const glm::vec3& worldPos )
+{
+	if ( !pain.size() ) return;
+	TimedVisibility* vis = pain.at( rand() % pain.size() );
+	if ( !vis || vis->parent->active )
+	{
+		vis = 0;
+		for ( unsigned int i = 0; i < pain.size() && !vis; ++i )
+		{
+			if ( !pain.at( i )->parent->active ) vis = pain.at( i );
+		}
+	}
+	if ( !vis ) return;
+	vis->makeVisible();
+}
+
+void GlobalItems::destroyDogeWords( )
+{
+	for each ( TimedVisibility* var in pain )
+	{
+		delete var;
+	}
+	pain.clear();
 }
 
 void GlobalItems::initLevel()
@@ -243,6 +311,7 @@ void GlobalItems::initLevel()
 	//ParticleWorld::global.addParticleToManage( unmovableParticle );
 	doge1falling = false;
 	doge2falling = false;
+	initDogeWords();
 	initWalls();
 	playMusic();
 	Clock::update();
@@ -351,7 +420,7 @@ void GlobalItems::drawLevel()
 }
 void GlobalItems::destroyLevel()
 {
-
+	destroyDogeWords();
 	if(planeInput2) delete planeInput2;
 	planeInput2 = 0;
 	if ( planeInput ) delete planeInput;
