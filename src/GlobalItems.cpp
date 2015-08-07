@@ -57,6 +57,12 @@ void GlobalItems::playWin( )
 	audio->playSound( "assets/audio/win.mp3" , true );
 }
 
+void GlobalItems::playMenu( )
+{
+	if ( !audio ) initAudio( );
+	audio->playSound( "assets/audio/menu.mp3" , true );
+}
+
 void GlobalItems::playFall( )
 {
 	if ( !audio ) initAudio( );
@@ -669,6 +675,7 @@ void GlobalItems::initStart()
 	camera->FOV = 60.0f;
 	camera->nearestObject = 0.01f;
 	view->addComponent( camera );
+	playMenu();
 }
 void GlobalItems::drawStart()
 {

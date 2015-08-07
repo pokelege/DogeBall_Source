@@ -75,6 +75,7 @@ struct GlobalItems
 	void playFall();
 	void playFail();
 	void playWin();
+	void playMenu();
 	void initAudio();
 	void destroyAudio();
 	void destroyAll();
