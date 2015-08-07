@@ -12,6 +12,6 @@ public:
 	float dodgeForce;
 	float doubleTapDelta;
 	bool pressing;
-	DodgeInput() { dodgeForce = 10.0f; doubleTapDelta = 0.25f; pressing = false; timeLastPress = 100; cooldown = 0; dodgeCooldown = 0.5f; currentSpeed = 0; }
+	DodgeInput() { dodgeForce = 10.0f; doubleTapDelta = 0.25f; pressing = false; timeLastPress = 100; cooldown = 0; dodgeCooldown = 0.75f; currentSpeed = 0; }
 	virtual void update();
 };

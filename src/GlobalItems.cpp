@@ -75,6 +75,12 @@ void GlobalItems::playFail( )
 	audio->playSound( "assets/audio/fail.wav" );
 }
 
+void GlobalItems::playDodge( )
+{
+	if ( !audio ) initAudio( );
+	audio->playSound( "assets/audio/dodge.mp3" );
+}
+
 void GlobalItems::initAudio()
 {
 	if ( audio ) destroyAudio();
@@ -299,7 +305,7 @@ void GlobalItems::addWin( )
 		}
 	}
 	if ( !vis ) return;
-	vis->makeVisible(2 );
+	vis->makeVisible( (( ( float ) rand( ) / RAND_MAX ) * 3.0f) + 0.5f);
 	vis->parent->translate = glm::vec3( ((((float)rand() / RAND_MAX) * 2) - 1) * 0.5f,
 										( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 0.5f ,
 		0);
@@ -380,8 +386,8 @@ void GlobalItems::initLevel()
 	player->addChild( renderableGameObject );
 	renderableGameObject->rotate = glm::angleAxis( glm::radians( 90.0f ) , glm::vec3( 1 , 0 , 0 ) );
 	planeInput = new DodgeInput;
-	planeInput->moveSensitivity = 2000;
-	planeInput->dodgeForce = 50.0f;
+	planeInput->moveSensitivity = 3000;
+	planeInput->dodgeForce = 40.0f;
 	player->addComponent( planeInput );
 	life1 = new Life;
 	player->addComponent( life1 );
@@ -415,8 +421,8 @@ void GlobalItems::initLevel()
 	planeInput2->down = VK_DOWN;
 	planeInput2->left = VK_LEFT;
 	planeInput2->right = VK_RIGHT;
-	planeInput2->moveSensitivity = 2000;
-	planeInput2->dodgeForce = 50.0f;
+	planeInput2->moveSensitivity = 3000;
+	planeInput2->dodgeForce = 40.0f;
 	player2->addComponent( planeInput2 );
 	life2 = new Life;
 	player2->addComponent( life2 );
@@ -783,6 +789,10 @@ void GlobalItems::initPlayer1Win()
 	view->translate = glm::vec3( 0 , 0 , 1.0f );
 	winSpawnTime = 0.5f;
 	initDogeWinWords();
+	for ( unsigned int i = 0; i < 5; ++i )
+	{
+		addWin();
+	}
 	playWin();
 	//CommonGraphicsCommands::initializeGlobalGraphics( );
 	//std::string errors;
@@ -832,7 +842,7 @@ void GlobalItems::updatePlayer1Win()
 	if ( winSpawnTime <= 0 )
 	{
 		addWin();
-		winSpawnTime = 0.5f;
+		winSpawnTime = ( ( ( ( float ) rand( ) ) / RAND_MAX ) * 0.5f ) + 0.1f;
 	}
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
@@ -933,6 +943,10 @@ void GlobalItems::initPlayer2Win()
 	view->translate = glm::vec3( 0 , 0 , 1.0f );
 	winSpawnTime = 0.5f;
 	initDogeWinWords( );
+	for ( unsigned int i = 0; i < 5; ++i )
+	{
+		addWin( );
+	}
 	playWin( );
 }
 void GlobalItems::drawPlayer2Win()
@@ -948,7 +962,7 @@ void GlobalItems::updatePlayer2Win()
 	if ( winSpawnTime <= 0 )
 	{
 		addWin( );
-		winSpawnTime = 0.5f;
+		winSpawnTime = ( ( ( ( float ) rand( ) ) / RAND_MAX ) * 0.5f ) + 0.1f;
 	}
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();

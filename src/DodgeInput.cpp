@@ -6,6 +6,7 @@
 #include <Physics\Particle.h>
 #include <Misc\Clock.h>
 #include <Graphics\AnimationRenderingInfo.h>
+#include <GlobalItems.h>
 void DodgeInput::update()
 {
 	cooldown -= Clock::dt;
@@ -39,6 +40,7 @@ void DodgeInput::update()
 		{
 			totalTranslate*= dodgeForce;
 			cooldown = dodgeCooldown;
+			GlobalItems::global.playDodge();
 			if ( animate && animate->currentlyPlaying!= 0 )animate->play( 0 );
 		}
 		else
