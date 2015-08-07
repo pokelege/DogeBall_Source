@@ -204,7 +204,7 @@ void GlobalItems::initDogeWords()
 		QFileInfo theFile = missDir.next( );
 		if ( theFile.suffix( ).compare( "tex" ) ) continue;
 		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( theFile.absoluteFilePath( ).toUtf8( ) );
-		for ( unsigned int i = 0; i < 5; ++i )
+		for ( unsigned int i = 0; i < 2; ++i )
 		{
 			GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject();
 			Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable();
@@ -251,6 +251,8 @@ void GlobalItems::addPain( const glm::vec3& worldPos )
 	if ( !vis ) return;
 	vis->makeVisible();
 	vis->parent->translate = worldPos;
+	vis->parent->translate.x += ( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 5;
+	vis->parent->translate.y += ( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 5;
 }
 
 void GlobalItems::addMiss( const glm::vec3& worldPos )
@@ -268,6 +270,8 @@ void GlobalItems::addMiss( const glm::vec3& worldPos )
 	if ( !vis ) return;
 	vis->makeVisible( );
 	vis->parent->translate = worldPos;
+	vis->parent->translate.x += ( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 5;
+	vis->parent->translate.y += ( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 5;
 }
 
 void GlobalItems::addWin( )
@@ -820,7 +824,7 @@ void GlobalItems::updatePlayer1Win()
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
-	if ( KeyInput::isDown( VK_SPACE ) ) changeState( GameStates::Start );
+	if ( KeyInput::isDown( VK_ESCAPE ) ) changeState( GameStates::Start );
 }
 void GlobalItems::destroyPlayer1Win()
 {
@@ -935,7 +939,7 @@ void GlobalItems::updatePlayer2Win()
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
 	GameObjectManager::globalGameObjectManager.earlyDrawParents();
-	if ( KeyInput::isDown( VK_SPACE ) ) changeState( GameStates::Start );
+	if ( KeyInput::isDown( VK_ESCAPE ) ) changeState( GameStates::Start );
 }
 void GlobalItems::destroyPlayer2Win()
 {
