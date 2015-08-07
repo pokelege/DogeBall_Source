@@ -51,6 +51,12 @@ void GlobalItems::playMusic()
 	audio->playSound( "assets/audio/music.mp3" , true );
 }
 
+void GlobalItems::playWin( )
+{
+	if ( !audio ) initAudio( );
+	audio->playSound( "assets/audio/win.mp3" , true );
+}
+
 void GlobalItems::playFall( )
 {
 	if ( !audio ) initAudio( );
@@ -770,6 +776,7 @@ void GlobalItems::initPlayer1Win()
 	view->translate = glm::vec3( 0 , 0 , 1.0f );
 	winSpawnTime = 0.5f;
 	initDogeWinWords();
+	playWin();
 	//CommonGraphicsCommands::initializeGlobalGraphics( );
 	//std::string errors;
 	//std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
@@ -919,6 +926,7 @@ void GlobalItems::initPlayer2Win()
 	view->translate = glm::vec3( 0 , 0 , 1.0f );
 	winSpawnTime = 0.5f;
 	initDogeWinWords( );
+	playWin( );
 }
 void GlobalItems::drawPlayer2Win()
 {
