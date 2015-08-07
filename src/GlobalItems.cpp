@@ -85,10 +85,66 @@ void GlobalItems::initPlayerTextures()
 	dogePatternTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/DogePattern.tex" );
 }
 
+void GlobalItems::initDogeWinWords( )
+{
+	win.clear( );
+	std::string errors;
+	std::string vert = FileReader( "assets/shaders/DogeWordVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DogeWordFragment.glsl" );
+	ShaderInfo* dogeShader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
+	std::cout << errors.c_str( ) << std::endl;
+	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	levelGeo->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
+	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	levelGeo->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	levelGeo->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	levelGeo->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	levelGeo->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
+
+	QDirIterator winDir( "assets/textures/DogeWord/Win/" );
+	while ( winDir.hasNext( ) )
+	{
+		QFileInfo theFile = winDir.next( );
+		if ( theFile.suffix( ).compare( "tex" ) ) continue;
+		TextureInfo* tex = GraphicsTextureManager::globalTextureManager.addTexture( theFile.absoluteFilePath( ).toUtf8( ) );
+		for ( unsigned int i = 0; i < 5; ++i )
+		{
+			GameObject* object = GameObjectManager::globalGameObjectManager.addGameObject( );
+			Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+			renderable->initialize( 5 , 1 );
+			renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+			renderable->geometryInfo = levelGeo;
+			renderable->shaderInfo = dogeShader;
+			renderable->alphaBlendingEnabled = true;
+			renderable->culling = CT_NONE;
+			renderable->addTexture( tex );
+			renderable->depthTestEnabled = false;
+			object->addComponent( renderable );
+			TextureParams par = tex->getParams( );
+			if ( std::max( par.width , par.height ) == par.width )
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.width , ( float ) par.height / par.width , 1 );
+			}
+			else
+			{
+				object->scale = 0.25f * glm::vec3( ( float ) par.width / par.height , ( float ) par.height / par.height , 1 );
+			}
+
+			TimedVisibility* vis = new TimedVisibility;
+			object->addComponent( vis );
+			vis->makeVisible( 0 );
+			win.push_back( vis );
+		}
+	}
+}
+
 void GlobalItems::initDogeWords()
 {
 	//clear the pain
 	pain.clear();
+	miss.clear();
 	std::string errors;
 	std::string vert = FileReader( "assets/shaders/DogeWordVertex.glsl" );
 	std::string frag = FileReader( "assets/shaders/DogeWordFragment.glsl" );
@@ -212,6 +268,34 @@ void GlobalItems::addMiss( const glm::vec3& worldPos )
 	if ( !vis ) return;
 	vis->makeVisible( );
 	vis->parent->translate = worldPos;
+}
+
+void GlobalItems::addWin( )
+{
+	if ( !win.size( ) ) return;
+	TimedVisibility* vis = win.at( rand( ) % win.size( ) );
+	if ( !vis || vis->parent->active )
+	{
+		vis = 0;
+		for ( unsigned int i = 0; i < win.size( ) && !vis; ++i )
+		{
+			if ( !win.at( i )->parent->active ) vis = win.at( i );
+		}
+	}
+	if ( !vis ) return;
+	vis->makeVisible(2 );
+	vis->parent->translate = glm::vec3( ((((float)rand() / RAND_MAX) * 2) - 1) * 0.5f,
+										( ( ( ( float ) rand( ) / RAND_MAX ) * 2 ) - 1 ) * 0.5f ,
+		0);
+}
+
+void GlobalItems::destroyDogeWinWords( )
+{
+	for each ( TimedVisibility* var in win )
+	{
+		delete var;
+	}
+	win.clear( );
 }
 
 void GlobalItems::destroyDogeWords( )
@@ -611,48 +695,127 @@ void GlobalItems::destroyStart()
 void GlobalItems::initPlayer1Win()
 {
 	CommonGraphicsCommands::initializeGlobalGraphics();
+	GraphicsCameraManager::globalCameraManager.initialize( 2 );
 	std::string errors;
-	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
-	std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
+	std::string vert = FileReader( "assets/shaders/DiffuseVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DiffuseFragment.glsl" );
 	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
 	std::cout << errors.c_str() << std::endl;
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
-	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
-	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	initPlayerTextures();
+	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/doge.pmd" , GraphicsBufferManager::globalBufferManager );
+	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	geometry->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
+	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	geometry->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	geometry->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	geometry->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.tex" );
 
-	GameObjectManager::globalGameObjectManager.initialize( 2 );
+	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+	renderable->initialize( 5 , 1 );
+	renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable->geometryInfo = geometry;
+	renderable->shaderInfo = shader;
+	renderable->alphaBlendingEnabled = false;
+	renderable->culling = CT_NONE;
+	renderable->addTexture( GlobalItems::global.player1Texture );
 
-	level = GameObjectManager::globalGameObjectManager.addGameObject();
-	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
-	renderable3->initialize( 5 , 1 );
-	renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
-	renderable3->geometryInfo = levelGeo;
-	renderable3->shaderInfo = shader;
-	renderable3->alphaBlendingEnabled = false;
-	renderable3->culling = CT_NONE;
-	renderable3->addTexture( levelTexture );
-	level->addComponent( renderable3 );
+	GameObjectManager::globalGameObjectManager.initialize( );
+
+	player = GameObjectManager::globalGameObjectManager.addGameObject( );
+
+	player->addComponent( renderable );
+
+	player->addComponent( animate1 = new AnimationRenderingInfo );
 	theTex = 0;
+	player->rotate = glm::rotate( glm::quat() , glm::radians(-100.0f) , glm::vec3( 0 , 1 , 0 ) );
+	player->translate = glm::vec3(0 , -0.5f , -3.0f);
+	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject( );
 
-	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
-	camera = GraphicsCameraManager::globalCameraManager.addCamera();
-	camera->initializeRenderManagers();
+	Light* light = GraphicsLightManager::global.addLight( );
+	lightBulb = GameObjectManager::globalGameObjectManager.addGameObject( );
+	lightBulb->addComponent( light );
+	//view->addChild( lightBulb );
+	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
+	lightBulb->translate = glm::vec3( 0 , 0 , 10 );
+
+	Camera* lightCamera = GraphicsCameraManager::globalCameraManager.addCamera( );
+	lightCamera->initializeRenderManagers( );
+	lightCamera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	lightCamera->FOV = 60.0f;
+	lightCamera->nearestObject = 0.01f;
+	lightCamera->direction = glm::normalize( glm::vec3( 0 , 0 , -1 ) );
+	lightCamera->attatchFrameBuffer( 0 , depthTexture = GraphicsTextureManager::globalTextureManager.addTexture( 0 , 1024 , 1024 , 1 , GL_DEPTH_COMPONENT32 , GL_DEPTH_COMPONENT , GL_FLOAT ) );
+	lightBulb->addComponent( lightCamera );
+	lightCamera->drawFrameBuffer = true;
+	lightCamera->drawCamera = false;
+	light->setDepthTexture( depthTexture );
+
+
+
+	camera = GraphicsCameraManager::globalCameraManager.addCamera( );
+	camera->initializeRenderManagers( );
+	camera->addLights( &GraphicsLightManager::global );
 	camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
 	camera->FOV = 60.0f;
 	camera->nearestObject = 0.01f;
 	view->addComponent( camera );
+	view->translate = glm::vec3( 0 , 0 , 1.0f );
+	winSpawnTime = 0.5f;
+	initDogeWinWords();
+	//CommonGraphicsCommands::initializeGlobalGraphics( );
+	//std::string errors;
+	//std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
+	//std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
+	//ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
+	//std::cout << errors.c_str( ) << std::endl;
+
+	//GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
+	//levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	//levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+
+	//TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player1Win.tex" );
+
+	//GameObjectManager::globalGameObjectManager.initialize( 2 );
+
+	//level = GameObjectManager::globalGameObjectManager.addGameObject( );
+	//Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+	//renderable3->initialize( 5 , 1 );
+	//renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	//renderable3->geometryInfo = levelGeo;
+	//renderable3->shaderInfo = shader;
+	//renderable3->alphaBlendingEnabled = false;
+	//renderable3->culling = CT_NONE;
+	//renderable3->addTexture( levelTexture );
+	//level->addComponent( renderable3 );
+	//theTex = 0;
+
+	//GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject( );
+	//camera = GraphicsCameraManager::globalCameraManager.addCamera( );
+	//camera->initializeRenderManagers( );
+	//camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	//camera->FOV = 60.0f;
+	//camera->nearestObject = 0.01f;
+	//view->addComponent( camera );
 }
 void GlobalItems::drawPlayer1Win()
 {
+	GraphicsSharedUniformManager::globalSharedUniformManager.updateLights( );
 	GraphicsCameraManager::globalCameraManager.drawAllCameras();
 	GameObjectManager::globalGameObjectManager.lateDrawParents();
 }
 void GlobalItems::updatePlayer1Win()
 {
 	Clock::update();
+	winSpawnTime -= Clock::dt;
+	if ( winSpawnTime <= 0 )
+	{
+		addWin();
+		winSpawnTime = 0.5f;
+	}
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
@@ -661,6 +824,7 @@ void GlobalItems::updatePlayer1Win()
 }
 void GlobalItems::destroyPlayer1Win()
 {
+	destroyDogeWinWords();
 	if ( planeInput2 ) delete planeInput2;
 	planeInput2 = 0;
 	if ( planeInput ) delete planeInput;
@@ -679,49 +843,94 @@ void GlobalItems::destroyPlayer1Win()
 
 void GlobalItems::initPlayer2Win()
 {
-	CommonGraphicsCommands::initializeGlobalGraphics();
+	CommonGraphicsCommands::initializeGlobalGraphics( );
+	GraphicsCameraManager::globalCameraManager.initialize( 2 );
 	std::string errors;
-	std::string vert = FileReader( "assets/shaders/FlatVertex.glsl" );
-	std::string frag = FileReader( "assets/shaders/FlatFragment.glsl" );
-	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str() , frag.c_str() , &errors );
-	std::cout << errors.c_str() << std::endl;
+	std::string vert = FileReader( "assets/shaders/DiffuseVertex.glsl" );
+	std::string frag = FileReader( "assets/shaders/DiffuseFragment.glsl" );
+	ShaderInfo* shader = GraphicsShaderManager::globalShaderManager.createShaderInfo( vert.c_str( ) , frag.c_str( ) , &errors );
+	std::cout << errors.c_str( ) << std::endl;
 
-	GeometryInfo* levelGeo = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/level.pmd" , GraphicsBufferManager::globalBufferManager );
-	levelGeo->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
-	levelGeo->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	initPlayerTextures( );
+	GeometryInfo* geometry = GraphicsGeometryManager::globalGeometryManager.addPMDGeometry( "assets/models/doge.pmd" , GraphicsBufferManager::globalBufferManager );
+	geometry->addShaderStreamedParameter( 0 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::POSITION_OFFSET );
+	geometry->addShaderStreamedParameter( 1 , PT_VEC4 , 0 , 0 );
+	geometry->addShaderStreamedParameter( 3 , PT_VEC2 , VertexInfo::STRIDE , VertexInfo::UV_OFFSET );
+	geometry->addShaderStreamedParameter( 2 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::NORMAL_OFFSET );
+	geometry->addShaderStreamedParameter( 4 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::TANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 5 , PT_VEC3 , VertexInfo::STRIDE , VertexInfo::BITANGENT_OFFSET );
+	geometry->addShaderStreamedParameter( 6 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGINDEX_OFFSET );
+	geometry->addShaderStreamedParameter( 7 , PT_VEC4 , VertexInfo::STRIDE , VertexInfo::BLENDINGWEIGHT_OFFSET );
 
-	TextureInfo* levelTexture = GraphicsTextureManager::globalTextureManager.addTexture( "assets/textures/Player2Win.tex" );
 
-	GameObjectManager::globalGameObjectManager.initialize( 2 );
+	Renderable* renderable = GraphicsRenderingManager::globalRenderingManager.addRenderable( );
+	renderable->initialize( 5 , 1 );
+	renderable->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
+	renderable->geometryInfo = geometry;
+	renderable->shaderInfo = shader;
+	renderable->alphaBlendingEnabled = false;
+	renderable->culling = CT_NONE;
+	renderable->addTexture( GlobalItems::global.player2Texture );
 
-	level = GameObjectManager::globalGameObjectManager.addGameObject();
-	Renderable* renderable3 = GraphicsRenderingManager::globalRenderingManager.addRenderable();
-	renderable3->initialize( 5 , 1 );
-	renderable3->sharedUniforms = &GraphicsSharedUniformManager::globalSharedUniformManager;
-	renderable3->geometryInfo = levelGeo;
-	renderable3->shaderInfo = shader;
-	renderable3->alphaBlendingEnabled = false;
-	renderable3->culling = CT_NONE;
-	renderable3->addTexture( levelTexture );
-	level->addComponent( renderable3 );
+	GameObjectManager::globalGameObjectManager.initialize( );
+
+	player = GameObjectManager::globalGameObjectManager.addGameObject( );
+
+	player->addComponent( renderable );
+
+	player->addComponent( animate1 = new AnimationRenderingInfo );
 	theTex = 0;
+	player->rotate = glm::rotate( glm::quat( ) , glm::radians( -100.0f ) , glm::vec3( 0 , 1 , 0 ) );
+	player->translate = glm::vec3( 0 , -0.5f , -3.0f );
+	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject( );
 
-	GameObject* view = GameObjectManager::globalGameObjectManager.addGameObject();
-	camera = GraphicsCameraManager::globalCameraManager.addCamera();
-	camera->initializeRenderManagers();
+	Light* light = GraphicsLightManager::global.addLight( );
+	lightBulb = GameObjectManager::globalGameObjectManager.addGameObject( );
+	lightBulb->addComponent( light );
+	//view->addChild( lightBulb );
+	light->setColor( glm::vec4( 1 , 1 , 1 , 1 ) );
+	lightBulb->translate = glm::vec3( 0 , 0 , 10 );
+
+	Camera* lightCamera = GraphicsCameraManager::globalCameraManager.addCamera( );
+	lightCamera->initializeRenderManagers( );
+	lightCamera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
+	lightCamera->FOV = 60.0f;
+	lightCamera->nearestObject = 0.01f;
+	lightCamera->direction = glm::normalize( glm::vec3( 0 , 0 , -1 ) );
+	lightCamera->attatchFrameBuffer( 0 , depthTexture = GraphicsTextureManager::globalTextureManager.addTexture( 0 , 1024 , 1024 , 1 , GL_DEPTH_COMPONENT32 , GL_DEPTH_COMPONENT , GL_FLOAT ) );
+	lightBulb->addComponent( lightCamera );
+	lightCamera->drawFrameBuffer = true;
+	lightCamera->drawCamera = false;
+	light->setDepthTexture( depthTexture );
+
+
+
+	camera = GraphicsCameraManager::globalCameraManager.addCamera( );
+	camera->initializeRenderManagers( );
+	camera->addLights( &GraphicsLightManager::global );
 	camera->addRenderList( &GraphicsRenderingManager::globalRenderingManager );
 	camera->FOV = 60.0f;
 	camera->nearestObject = 0.01f;
 	view->addComponent( camera );
+	view->translate = glm::vec3( 0 , 0 , 1.0f );
+	winSpawnTime = 0.5f;
+	initDogeWinWords( );
 }
 void GlobalItems::drawPlayer2Win()
 {
+	GraphicsSharedUniformManager::globalSharedUniformManager.updateLights( );
 	GraphicsCameraManager::globalCameraManager.drawAllCameras();
 	GameObjectManager::globalGameObjectManager.lateDrawParents();
 }
 void GlobalItems::updatePlayer2Win()
 {
 	Clock::update();
+	winSpawnTime -= Clock::dt;
+	if ( winSpawnTime <= 0 )
+	{
+		addWin( );
+		winSpawnTime = 0.5f;
+	}
 	GameObjectManager::globalGameObjectManager.earlyUpdateParents();
 	GameObjectManager::globalGameObjectManager.updateParents();
 	GameObjectManager::globalGameObjectManager.lateUpdateParents();
@@ -730,6 +939,7 @@ void GlobalItems::updatePlayer2Win()
 }
 void GlobalItems::destroyPlayer2Win()
 {
+	destroyDogeWinWords();
 	if ( planeInput2 ) delete planeInput2;
 	planeInput2 = 0;
 	if ( planeInput ) delete planeInput;
