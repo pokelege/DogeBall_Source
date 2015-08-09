@@ -12,7 +12,15 @@ void DogeBall::initializeGL()
 }
 void DogeBall::paintGL()
 {
-	GlobalItems::global.draw();
+	try
+	{
+		GlobalItems::global.draw();
+	}
+	catch (...)
+	{
+		int i = 0;
+		++i;
+	}
 }
 
 void DogeBall::update()
